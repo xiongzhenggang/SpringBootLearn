@@ -19,7 +19,7 @@ public class EhCacheConfig {
     }
     //配置EhCacheManagerFactoryBean，ehcache.xml在resource下的配置
     @Bean
-    public EhCacheManagerFactoryBean ehCacheManagerFactoryBean(){
+    public EhCacheManagerFactoryBean ehcahe(){
            EhCacheManagerFactoryBean ehCacheManagerFactoryBean =
                    new EhCacheManagerFactoryBean();
            ehCacheManagerFactoryBean.setConfigLocation(
@@ -27,4 +27,5 @@ public class EhCacheConfig {
            );
            return ehCacheManagerFactoryBean;
     }
+
 }

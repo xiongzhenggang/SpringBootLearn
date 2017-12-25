@@ -60,11 +60,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
-        //echa缓存
+        <!-- echa缓存https://mvnrepository.com/artifact/net.sf.ehcache/ehcache -->
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
+            <version>2.10.4</version>
         </dependency>
+
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
@@ -86,5 +88,4 @@
         </snapshots>
     </repository>
 </repositories>
-
 </project>
