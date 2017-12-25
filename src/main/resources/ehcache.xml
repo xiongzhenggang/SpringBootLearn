@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache>
-    <!--切换为ehcache 缓存时使用-->
-    <cache name="people" maxElementsInMemory="1000" />
+    <!--切换为ehcache 缓存时使用,声明一个名为pittleCache 最大堆内存为50M 存货时间为100秒的缓存-->
+    <cache name="spittleCache" maxBytesLocalHeap="50m"
+                        timeToLiveSecond="100">
+    </cache>
 </ehcache>
