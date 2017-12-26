@@ -43,5 +43,8 @@ public class EhCacheConfig {
 </ehcache>
 ```
 ### redis 作为缓存和ehcache配置类似，暂不叙说，配置文件路径com.xzg.cn.configure可自行查看
-
+* springboot 已经实现相关配置，需要手动配置的是application.properties文件
 ### 下面使用过程，则通过几种注解实现
+```
+@CacheConfig，@Cacheable，@CachePut，@CacheEvict
+```
