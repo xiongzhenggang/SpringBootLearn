@@ -46,5 +46,9 @@ public class EhCacheConfig {
 * springboot 已经实现相关配置，需要手动配置的是application.properties文件
 ### 下面使用过程，则通过几种注解实现
 ```
-@CacheConfig，@Cacheable，@CachePut，@CacheEvict
+@Cacheable ：表明spring在调用方法之前，首先在缓存查找缓存，如果找到直接返回
+否则嗲用方法返回值，并保存到缓存中
+@CachePut : 始终调用方法，并返回值放入缓存中
+@CacheEvict ： 清除spring缓存中的一个或多个条目
+@CacheConfig : 这是一个分组注解，能够同时应用多个其他的缓存注解
 ```

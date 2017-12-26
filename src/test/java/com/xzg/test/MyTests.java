@@ -5,12 +5,12 @@ import com.xzg.cn.common.BlankDisc;
 import com.xzg.cn.common.BlankDisc2;
 import com.xzg.cn.common.CompactDisc;
 import com.xzg.cn.common.ExpressiveConfig;
-import com.xzg.cn.entity.Item;
-import com.xzg.cn.entity.Order;
-import com.xzg.cn.repository.impJpaRepostory.SpitteryRepository;
+import com.xzg.cn.entity.Spitter;
 import com.xzg.cn.repository.impJpaRepostory.SpitterRepostory2;
+import com.xzg.cn.repository.impJpaRepostory.SpitteryRepository;
 import com.xzg.cn.repository.mogoRepository.OrderMTRepository;
 import com.xzg.cn.repository.mogoRepository.OrderRepository;
+import com.xzg.cn.service.SpitterService;
 import hello.SampleController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,10 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-
-import java.util.Arrays;
-
-import static junit.framework.TestCase.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class) // SpringJUnit支持，由此引入Spring-Test框架支持！
 //@SpringApplicationConfiguration(classes = SampleController.class) // 指定我们SpringBoot工程的Application启动类
@@ -54,6 +50,8 @@ public class MyTests {
     //注入混合类
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private SpitterService spitterService;
     @Test
     public void exampleTest() {
 //        System.out.println(bl2.toString());
@@ -76,7 +74,8 @@ public class MyTests {
         //使用自动jpa
         /*System.out.println(spitterRepostory2.findByName("zhangsan"));
         System.out.println(spitterRepostory2.eliteSweep());*/
-        Order order = new Order();
+        //mongodb操作
+      /*  Order order = new Order();
         order.setCustomer("客户段");
         order.setType("WEB");
         Item item = new Item("豆子",2,3);
@@ -87,7 +86,11 @@ public class MyTests {
                 .stream()
                 .forEach(s -> {
                     System.out.println(s.toString());
-                });
+                });*/
+      //检测缓存是否生效
+        Spitter sp = new Spitter(2,"wxiaowang");
+        spitterService.addSpitter(sp);
+        spitterService.getSpitterById(2);
     }
 
 }
