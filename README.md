@@ -52,3 +52,4 @@ public class EhCacheConfig {
 @CacheEvict ： 清除spring缓存中的一个或多个条目
 @CacheConfig : 这是一个分组注解，能够同时应用多个其他的缓存注解
 ```
+## 需要注意的是，@EnableCaching需要加到SpringbootApplication启动类上，否则缓存不会起作用

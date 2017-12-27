@@ -4,7 +4,6 @@ import com.xzg.cn.entity.Spitter;
 import com.xzg.cn.repository.impJpaRepostory.SpitteryRepository;
 import com.xzg.cn.service.SpitterService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 //服务实现接口
@@ -16,14 +15,14 @@ public class SpitterServiceImpl implements SpitterService {
 
     @Override
     //见spitter的id作为缓存的key
-    @CachePut(value = "spittercache",key = "#result.id")
+//    @CachePut(value = "spittleCache",key = "#result.id")
     public void addSpitter(Spitter spitter) {
         sR.addSpittery(spitter);
     }
 
     @Override
-    //取出
-    @Cacheable(value = "spittercache",key = "#result.id")
+    //取出 （key="#p0"）指定传入的第一个参数作为redis的key
+    @Cacheable(value = "spittleCache" , key = "#id")
     public Spitter getSpitterById(long id) {
         System.out.println("=====》数据库执行前");
         Spitter sp = sR.getSpitter(id);

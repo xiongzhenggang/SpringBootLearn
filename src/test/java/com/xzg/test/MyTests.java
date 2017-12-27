@@ -90,7 +90,8 @@ public class MyTests {
       //检测缓存是否生效
         Spitter sp = new Spitter(2,"wxiaowang");
         spitterService.addSpitter(sp);
-        spitterService.getSpitterById(2);
+        System.out.println(spitterService.getSpitterById(2));
+        System.out.println(spitterService.getSpitterById(2));
     }
 
 }
