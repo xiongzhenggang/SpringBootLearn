@@ -13,7 +13,7 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.File;
 @Controller
-public class FileController {
+public class    FileController {
     //跳转到上传文件的页面
     @RequestMapping(value="/gouploadimg", method = RequestMethod.GET)
     public String goUploadImg() {

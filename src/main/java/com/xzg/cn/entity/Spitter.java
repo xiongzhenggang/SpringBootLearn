@@ -1,10 +1,11 @@
 package com.xzg.cn.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "spitter")
-public class Spitter {
+public class Spitter implements Serializable {
 
     public Spitter(long id,String name){
         super();

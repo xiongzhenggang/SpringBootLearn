@@ -1,10 +1,7 @@
 package com.xzg.test;
 
 import com.xzg.cn.aop.TrackCounter;
-import com.xzg.cn.common.BlankDisc;
-import com.xzg.cn.common.BlankDisc2;
-import com.xzg.cn.common.CompactDisc;
-import com.xzg.cn.common.ExpressiveConfig;
+import com.xzg.cn.common.*;
 import com.xzg.cn.entity.Spitter;
 import com.xzg.cn.repository.impJpaRepostory.SpitterRepostory2;
 import com.xzg.cn.repository.impJpaRepostory.SpitteryRepository;
@@ -52,6 +49,8 @@ public class MyTests {
     private OrderRepository orderRepository;
     @Autowired
     private SpitterService spitterService;
+    @Autowired
+    private RedisClientTemplate template;
     @Test
     public void exampleTest() {
 //        System.out.println(bl2.toString());
@@ -88,6 +87,7 @@ public class MyTests {
                     System.out.println(s.toString());
                 });*/
       //检测缓存是否生效
+        template.setToRedis("key","ssb");
         Spitter sp = new Spitter(2,"wxiaowang");
         spitterService.addSpitter(sp);
         System.out.println(spitterService.getSpitterById(2));
