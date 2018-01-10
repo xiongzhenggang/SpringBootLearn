@@ -53,3 +53,70 @@ public class EhCacheConfig {
 @CacheConfig : 这是一个分组注解，能够同时应用多个其他的缓存注解
 ```
 ## 需要注意的是，@EnableCaching需要加到SpringbootApplication启动类上，否则缓存不会起作用
+```xml
+<beanid="redisSentinelConfiguration"
+
+        class="org.springframework.data.redis.connection.RedisSentinelConfiguration">
+
+       
+
+        <propertyname="master">
+
+            <beanclass="org.springframework.data.redis.connection.RedisNode">
+
+                <propertyname="name"value="mymaster"></property>
+
+            </bean>
+
+        </property>
+
+        <propertyname="sentinels">
+
+            <set>
+
+                <beanclass="org.springframework.data.redis.connection.RedisNode">
+
+                    <constructor-argname="host"value="192.168.0.100"></constructor-arg> 
+
+                <constructor-argname="port"value="26380"></constructor-arg>                   
+
+                </bean>
+
+                <beanclass="org.springframework.data.redis.connection.RedisNode">
+
+                    <constructor-argname="host"value="192.168.0.100"/>
+
+                    <constructor-argname="port"value="26381"/>               
+
+                </bean>
+
+                <beanclass="org.springframework.data.redis.connection.RedisNode">                   
+
+                    <constructor-argname="host"value="192.168.0.100"/>
+
+                    <constructor-argname="port"value="26382"/>               
+
+                </bean>
+
+            </set>
+
+        </property>
+
+   </bean>
+
+ 
+
+   <beanid="jeidsConnectionFactory"
+
+   class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+
+      <constructor-argref="redisSentinelConfiguration"/>
+
+   </bean>
+
+ 
+
+   <beanid="redisTemplate"class="org.springframework.data.redis.core.RedisTemplate"
+
+      p:connection-factory-ref="jeidsConnectionFactory"/>
+```
