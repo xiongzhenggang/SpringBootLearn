@@ -53,70 +53,99 @@ public class EhCacheConfig {
 @CacheConfig : 这是一个分组注解，能够同时应用多个其他的缓存注解
 ```
 ## 需要注意的是，@EnableCaching需要加到SpringbootApplication启动类上，否则缓存不会起作用
-```xml
-<beanid="redisSentinelConfiguration"
-
-        class="org.springframework.data.redis.connection.RedisSentinelConfiguration">
-
-       
-
-        <propertyname="master">
-
-            <beanclass="org.springframework.data.redis.connection.RedisNode">
-
-                <propertyname="name"value="mymaster"></property>
-
-            </bean>
-
-        </property>
-
-        <propertyname="sentinels">
-
-            <set>
-
-                <beanclass="org.springframework.data.redis.connection.RedisNode">
-
-                    <constructor-argname="host"value="192.168.0.100"></constructor-arg> 
-
-                <constructor-argname="port"value="26380"></constructor-arg>                   
-
-                </bean>
-
-                <beanclass="org.springframework.data.redis.connection.RedisNode">
-
-                    <constructor-argname="host"value="192.168.0.100"/>
-
-                    <constructor-argname="port"value="26381"/>               
-
-                </bean>
-
-                <beanclass="org.springframework.data.redis.connection.RedisNode">                   
-
-                    <constructor-argname="host"value="192.168.0.100"/>
-
-                    <constructor-argname="port"value="26382"/>               
-
-                </bean>
-
-            </set>
-
-        </property>
-
-   </bean>
-
- 
-
-   <beanid="jeidsConnectionFactory"
-
-   class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
-
-      <constructor-argref="redisSentinelConfiguration"/>
-
-   </bean>
-
- 
-
-   <beanid="redisTemplate"class="org.springframework.data.redis.core.RedisTemplate"
-
-      p:connection-factory-ref="jeidsConnectionFactory"/>
+### 添加redis缓存，这里使用的redis集群，单机咱不赘述
+* 配置类如下：
+```java
+//spring boot 已经实现如下配置，需要手动配置的application.properties文件
+@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 2)
+@Configuration
+@EnableCaching//启动自动缓存
+public class RedisCacheConfig extends CachingConfigurerSupport {
+    @Value("${spring.redis.host}")
+    private String host;
+    @Value("${spring.redis.port}")
+    private int port;
+    @Value("${spring.redis.timeout}")
+    private int timeout;
+//@SuppressWarnings("rawtypes") RedisTemplate redisTemplate
+    @Bean
+    public CacheManager redisCacheManager() {
+        RedisCacheManager cacheManager = RedisCacheManager.create(redisConnectionFactory());
+        cacheManager.setTransactionAware(true);
+        return cacheManager;
+    }
+    // 集群 spring boot 自动实现工厂，不需要在手动实现@
+public JedisPoolConfig jedisPoolConfig() {
+    JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+    jedisPoolConfig.setMaxIdle(10);
+    jedisPoolConfig.setMaxTotal(10);
+    jedisPoolConfig.setMaxWaitMillis(1000);
+    return jedisPoolConfig;
+}
+//使用spring-data-redis
+@Bean
+public RedisClusterConfiguration redisClusterConfiguration(){
+    RedisClusterConfiguration rc = new RedisClusterConfiguration();
+    Set<RedisNode> jedisClusterNodes = new HashSet<RedisNode>();
+    // Jedis Cluster will attempt to discover cluster nodes automatically
+    jedisClusterNodes.add(new RedisNode("192.168.1.105", 7000));
+    jedisClusterNodes.add(new RedisNode("192.168.1.105", 7001));
+    jedisClusterNodes.add(new RedisNode("192.168.1.105", 7002));
+    jedisClusterNodes.add(new RedisNode("192.168.1.105", 7003));
+    jedisClusterNodes.add(new RedisNode("192.168.1.105", 7004));
+    jedisClusterNodes.add(new RedisNode("192.168.1.105", 7005));
+    rc.setClusterNodes(jedisClusterNodes);
+    return  rc;
+}
+//添加集群配置以及redis池
+    @Bean
+    public JedisConnectionFactory redisConnectionFactory()  {
+        JedisConnectionFactory redisConnectionFactory = new JedisConnectionFactory(redisClusterConfiguration(),
+                jedisPoolConfig());
+        return redisConnectionFactory;
+    }
+//直接使用rredis集群的客户端，与spring-data-redis无关了
+@Bean
+public JedisCluster jedisCluster(){
+    Set<HostAndPort> nodes = new LinkedHashSet<HostAndPort>();
+    nodes.add(new HostAndPort("192.168.1.105", 7000));
+    nodes.add(new HostAndPort("192.168.1.105", 7001));
+    nodes.add(new HostAndPort("192.168.1.105", 7002));
+    nodes.add(new HostAndPort("192.168.1.105", 7003));
+    nodes.add(new HostAndPort("192.168.1.105", 7004));
+    nodes.add(new HostAndPort("192.168.1.105", 7005));
+    return new JedisCluster(nodes, jedisPoolConfig());
+}
+}
 ```
+* 上述中的集群主机需要配置好
+可以通过测试类测试Mytest.java
+```java
+        spitterService.addSpitter(sp);
+//spitterService中的实现类中，添加了注解缓存
+        System.out.println(spitterService.getSpitterById(2));
+        System.out.println(spitterService.getSpitterById(2));
+```
+spitterService的实现类中
+```java
+    @Override
+    //取出 （key="#p0"）指定传入的第一个参数作为redis的key
+    @Cacheable(value = "spittleCache" , key = "#id")
+    public Spitter getSpitterById(long id) {
+        System.out.println("=====》数据库执行前");
+        Spitter sp = sR.getSpitter(id);
+        System.out.println("=====》数据库执行后");
+        return sp;
+    }
+}
+```
+测试结果：
+```xml
+Hibernate: insert into spitter (email, name, id) values (?, ?, ?)
+=====》数据库执行前
+Hibernate: select spitter0_.id as id1_0_0_, spitter0_.email as email2_0_0_, spitter0_.name as name3_0_0_ from spitter spitter0_ where spitter0_.id=?
+=====》数据库执行后
+Spitter{id=2, name='wxiaowang'}
+Spitter{id=2, name='wxiaowang'}
+```
+可以看到两次执行，只查询了一次数据库

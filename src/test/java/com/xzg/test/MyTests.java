@@ -87,7 +87,7 @@ public class MyTests {
                     System.out.println(s.toString());
                 });*/
       //检测缓存是否生效
-        template.setToRedis("key","ssb");
+//        template.setToRedis("key","ssb");
         Spitter sp = new Spitter(2,"wxiaowang");
         spitterService.addSpitter(sp);
         System.out.println(spitterService.getSpitterById(2));

@@ -9,14 +9,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.RedisClusterConfiguration;
+import org.springframework.data.redis.connection.RedisNode;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.JedisSentinelPool;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 //spring boot 已经实现如下配置，需要手动配置的application.properties文件
@@ -34,8 +35,6 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
     @Bean
     public CacheManager redisCacheManager() {
         RedisCacheManager cacheManager = RedisCacheManager.create(redisConnectionFactory());
-        // Number of seconds before expiration. Defaults to unlimited (0)
-//        cacheManager.setDefaultExpiration(3000); // Sets the default expire time (in seconds)
         cacheManager.setTransactionAware(true);
         return cacheManager;
     }
@@ -47,42 +46,51 @@ public JedisPoolConfig jedisPoolConfig() {
     jedisPoolConfig.setMaxWaitMillis(1000);
     return jedisPoolConfig;
 }
-//哨兵+集群
-public JedisSentinelPool jedisSentinelPool() {
-    String[] hosts = {"192.168.1.105:26379"};
-    HashSet<String> sentinelHostAndPorts = new HashSet<>();
-    for (String hn : hosts) {
-        sentinelHostAndPorts.add(hn);
-    }
-    JedisSentinelPool sentinelPool = new JedisSentinelPool("mymaster", sentinelHostAndPorts, jedisPoolConfig());
-    /*sentinelPool.setMaxTotal(10);
-        jedisPoolConfig.setMaxWaitMillis(1000);*/
-        return sentinelPool;
-    }
-    //哨兵
-    public RedisSentinelConfiguration jedisSentinelConfig() {
-        String[] hosts = {"192.168.1.105:26379","192.168.1.105:36379","192.168.1.105:46379"};
-        HashSet<String> sentinelHostAndPorts = new HashSet<>();
-        for (String hn : hosts) {
-            sentinelHostAndPorts.add(hn);
-        }
-        System.out.println(host);
-        return new RedisSentinelConfiguration("mymaster", sentinelHostAndPorts);
-
-    }
+//使用spring-data-redis
+@Bean
+public RedisClusterConfiguration redisClusterConfiguration(){
+    RedisClusterConfiguration rc = new RedisClusterConfiguration();
+    Set<RedisNode> jedisClusterNodes = new HashSet<RedisNode>();
+    // Jedis Cluster will attempt to discover cluster nodes automatically
+    jedisClusterNodes.add(new RedisNode("192.168.1.105", 7000));
+    jedisClusterNodes.add(new RedisNode("192.168.1.105", 7001));
+    jedisClusterNodes.add(new RedisNode("192.168.1.105", 7002));
+    jedisClusterNodes.add(new RedisNode("192.168.1.105", 7003));
+    jedisClusterNodes.add(new RedisNode("192.168.1.105", 7004));
+    jedisClusterNodes.add(new RedisNode("192.168.1.105", 7005));
+    rc.setClusterNodes(jedisClusterNodes);
+    return  rc;
+}
+//添加集群配置以及redis池
     @Bean
     public JedisConnectionFactory redisConnectionFactory()  {
-        JedisConnectionFactory redisConnectionFactory = new JedisConnectionFactory(jedisSentinelConfig(),
+        JedisConnectionFactory redisConnectionFactory = new JedisConnectionFactory(redisClusterConfiguration(),
                 jedisPoolConfig());
-        //RedisStandaloneConfiguration standaloneConfig, JedisClientConfiguration clientConfig
-       /* if (!StringUtils.isEmpty("123456"))
-            redisConnectionFactory.setPassword(redisProperties.getPassword());
-        JedisConnectionFactory redisConnectionFactory = new JedisConnectionFactory();
-        // Defaults
-        redisConnectionFactory.setHostName(host);
-        redisConnectionFactory.setPort(port);*/
         return redisConnectionFactory;
     }
+//直接使用rredis集群的客户端，与spring-data-redis无关了
+@Bean
+public JedisCluster jedisCluster(){
+    Set<HostAndPort> nodes = new LinkedHashSet<HostAndPort>();
+    nodes.add(new HostAndPort("192.168.1.105", 7000));
+    nodes.add(new HostAndPort("192.168.1.105", 7001));
+    nodes.add(new HostAndPort("192.168.1.105", 7002));
+    nodes.add(new HostAndPort("192.168.1.105", 7003));
+    nodes.add(new HostAndPort("192.168.1.105", 7004));
+    nodes.add(new HostAndPort("192.168.1.105", 7005));
+   /* String[] hosts = {"192.168.1.105:7000",
+            "192.168.1.105:7001",
+            "192.168.1.105:7002",
+            "192.168.1.105:7003",
+            "192.168.1.105:7004",
+            "192.168.1.105:7005"};
+    Set<HostAndPort> nodes = new HashSet<>();
+    for (String hn : hosts) {
+        String[] ipPort = hn.split(":");
+        nodes.add(new HostAndPort(ipPort[0].trim(),Integer.valueOf(ipPort[1].trim())));
+    }*/
+    return new JedisCluster(nodes, jedisPoolConfig());
+}
 /*@Bean
 public RedisTemplate redisTemplate() {
     StringRedisTemplate redisTemplate = new StringRedisTemplate(redisConnectionFactory());
@@ -96,16 +104,27 @@ public RedisTemplate redisTemplate() {
     redisTemplate.afterPropertiesSet();
     return redisTemplate;
 }*/
-//注入客户端，与缓存无关
-@Bean
-public JedisCluster jedisCluster(){
+//哨兵模式弃用，使用集群模式替代
+/*public JedisSentinelPool jedisSentinelPool() {
     String[] hosts = {"192.168.1.105:26379","192.168.1.105:36379","192.168.1.105:46379"};
-    Set<HostAndPort> nodes = new HashSet<>();
+    HashSet<String> sentinelHostAndPorts = new HashSet<>();
     for (String hn : hosts) {
-        String[] ipPort = hn.split(":");
-        nodes.add(new HostAndPort(ipPort[0].trim(),Integer.valueOf(ipPort[1].trim())));
+        sentinelHostAndPorts.add(hn);
     }
-    return new JedisCluster(nodes, jedisPoolConfig());
-}
+    JedisSentinelPool sentinelPool = new JedisSentinelPool("mymaster", sentinelHostAndPorts, jedisPoolConfig());
+    *//*sentinelPool.setMaxTotal(10);
+        jedisPoolConfig.setMaxWaitMillis(1000);*//*
+        return sentinelPool;
+    }*/
+   /* //哨兵
+    public RedisSentinelConfiguration jedisSentinelConfig() {
+        String[] hosts = {"192.168.1.105:26379","192.168.1.105:36379","192.168.1.105:46379"};
+        HashSet<String> sentinelHostAndPorts = new HashSet<>();
+        for (String hn : hosts) {
+            sentinelHostAndPorts.add(hn);
+        }
+        System.out.println(host);
+        return new RedisSentinelConfiguration("mymaster", sentinelHostAndPorts);
 
+    }*/
 }
