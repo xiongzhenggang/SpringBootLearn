@@ -17,7 +17,8 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter{
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()//
-                .antMatchers("/", "/home").permitAll()//这俩请求不做登陆拦截
+                .antMatchers("/", "/home","/HelloWorldService")
+                .permitAll()//这俩请求不做登陆拦截
                 .anyRequest().authenticated()//做登陆拦截
                 .and()
                 .formLogin()

@@ -22,7 +22,7 @@ public class SpitterServiceImpl implements SpitterService {
 
     @Override
     //取出 （key="#p0"）指定传入的第一个参数作为redis的key
-    @Cacheable(value = "spittleCache" , key = "#id")
+    @Cacheable(value = "spittleCache" , key = "#id")//spittleCache
     public Spitter getSpitterById(long id) {
         System.out.println("=====》数据库执行前");
         Spitter sp = sR.getSpitter(id);
