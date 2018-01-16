@@ -149,3 +149,89 @@ Spitter{id=2, name='wxiaowang'}
 Spitter{id=2, name='wxiaowang'}
 ```
 可以看到两次执行，只查询了一次数据库
+
+### rmi hessian httpinvoker 等spring配置使用
+* 以上几种均属于rmi。如果直接使用的话会比较负载，这里使用spring
+* 配置俩简化。以hessian和httpInvoker为例
+```
+所有的远程调用服务（客户端调用服务端腹部的服务）
+```
+1.  服务端配置发布服务的使用（需实现发布服务的接口及实现类）
+
+1） 
+```java
+//Hessian服务端配置
+@Configuration
+public class HessianConfig {
+    //不要让spring security拦截
+    @Bean(name = "/HelloWorldService")
+    //HessianServiceExporter是一个spring mvc的控制器，他接受Hessian请求，并将这些请求转换成
+    //对到处pojo的方法调用。HessianServiceExporter会把helloService bean到处为Heassian服务
+    public HessianServiceExporter hessianHelloServiceExporter(HelloService helloService){
+       //HelloService 为服务端接口、且有对应的实现类
+        HessianServiceExporter export = new HessianServiceExporter();
+        export.setService(helloService);
+        export.setServiceInterface(HelloService.class);
+        return export;
+    }
+}
+
+//配置httpInvoker
+@Configuration
+public class HttpInvokerConfig {
+    //HttpInvokerServiceExporter 是一个sprinvmvc的控制器，需要url映射
+    @Bean
+    public HttpInvokerServiceExporter httpExporterHelloService(HelloService helloService){
+        HttpInvokerServiceExporter exporter =
+                new HttpInvokerServiceExporter();
+        exporter.setService(helloService);
+        exporter.setServiceInterface(HelloService.class);
+        return exporter;
+    }
+    //需要url映射
+    @Bean
+    public HandlerMapping handlerMapping(){
+        SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+        Properties mappings = new Properties();
+        //httpExporterHelloService 注入上面的bean
+        mappings.setProperty("/hello.service","httpExporterHelloService");
+        mapping.setMappings(mappings);
+        return mapping;
+    }
+}
+```
+
+2. Hessian客户端不使用用Spring的使用过程（客户端需要定义与服务端相同的接口）
+```java
+//测试不适用spring的Hessian客户端使用
+public class ClientHessian {
+    public static void main(String[] args) {
+                String url = "http://localhost:8080/HelloWorldService";
+
+                try {
+                    HessianProxyFactory  factory = new HessianProxyFactory();
+                    factory.setOverloadEnabled(true);
+                    HelloService service = (HelloService) (factory).create(HelloService.class, url);
+                        System.out.println(service.getSpitter());
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+           }
+}
+```
+* httpInvoker 客户端spring配置
+```java
+@Configuration
+public class HttpInvokerClientConfig {
+    @Bean
+    public HttpInvokerProxyFactoryBean httpInvokerProxyFactoryBean(){
+        HttpInvokerProxyFactoryBean proxy = new HttpInvokerProxyFactoryBean();
+        proxy.setServiceUrl("http://localhost:8080/Hello/hello.service/");
+        proxy.setServiceInterface(HelloService.class);
+        return proxy;
+    }
+    //然后就可以直接使用@Autowired注入HelloService使用
+}
+//类似与@Autowired
+// private HelloService helloService; 直接使用
+```
