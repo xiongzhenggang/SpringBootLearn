@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache updateCheck="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://ehcache.sf.net/ehcache.xsd">
+    <diskStore path="java.io.tmpdir/ehcache"/>
+<!--切换为ehcache 缓存时使用,声明一个名为pittleCache 最大堆内存为50M 存货时间为100秒的缓存-->
+    <!--  默认的管理策略
+   maxElementsOnDisk： 在磁盘上缓存的element的最大数目，默认值为0，表示不限制。
+   eternal:设定缓存的elements是否永远不过期。如果为true，则缓存的数据始终有效，如果为false那么还要根据timeToIdleSeconds，timeToLiveSeconds判断。
+   diskPersistent： 是否在磁盘上持久化。指重启jvm后，数据是否有效。默认为false。
+   diskExpiryThreadIntervalSeconds:对象检测线程运行时间间隔。标识对象状态（过期/持久化）的线程多长时间运行一次。
+   -->
+    <defaultCache maxElementsInMemory="10000"
+                  eternal="false"
+                  timeToIdleSeconds="3600"
+                  timeToLiveSeconds="3600"
+                  overflowToDisk="true"
+                  diskPersistent="false"
+                  diskExpiryThreadIntervalSeconds="120"
+                  memoryStoreEvictionPolicy="LRU"/>
+
+<cache name="spittleCache" maxBytesLocalHeap="50m"
+       timeToLiveSeconds="100" />
+ <!--   &lt;!&ndash; 对象无过期，一个1000长度的队列，最近最少使用的对象被删除 &ndash;&gt;
+    <cache name="userCache"
+           maxElementsInMemory="1000"
+           eternal="true"
+           overflowToDisk="false"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="0"
+           memoryStoreEvictionPolicy="LFU">
+    </cache>-->
+</ehcache>
