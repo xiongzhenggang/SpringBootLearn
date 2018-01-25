@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class TestContronller {
-    @RequestMapping(value = "/{id}",method = RequestMethod.GET)
+    @RequestMapping(value = "/test/{id}",method = RequestMethod.GET)
     public Spitter spitterById(@PathVariable long id){
         Spitter spitter = new Spitter(2,"xxx");
         if(null != spitter){
