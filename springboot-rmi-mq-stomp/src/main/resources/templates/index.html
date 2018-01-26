@@ -31,6 +31,7 @@ Welcome<br/><input id="text" type="text" />
         function connectCallback(frame) {
             // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
             setMessageInnerHTML("连接成功");
+            //客户端订阅地址
             stompClient.subscribe('/app/subscribeTest', function (response) {
                 setMessageInnerHTML("已成功订阅/app/subscribeTest");
                 var returnData = JSON.parse(response.body);
@@ -53,7 +54,7 @@ Welcome<br/><input id="text" type="text" />
 
     //订阅消息
     function subscribe1() {
-        stompClient.subscribe('/topic/subscribeTest', function (response) {
+        stompClient.subscribe("/topic/subscribeTest", function (response) {
             setMessageInnerHTML("已成功订阅/topic/subscribeTest");
             var returnData = JSON.parse(response.body);
             setMessageInnerHTML("/topic/subscribeTest 你接收到的消息为:" + returnData.responseMessage);
@@ -62,7 +63,7 @@ Welcome<br/><input id="text" type="text" />
 
     //订阅消息
     function subscribe2() {
-        stompClient.subscribe('/topic/sendTest', function (response) {
+        stompClient.subscribe("/topic/sendTest", function (response) {
             setMessageInnerHTML("已成功订阅/topic/sendTest");
             var returnData = JSON.parse(response.body);
             setMessageInnerHTML("/topic/sendTest 你接收到的消息为:" + returnData.responseMessage);

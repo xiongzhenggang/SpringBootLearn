@@ -31,6 +31,7 @@ Welcome<br/><input id="text" type="text" />
         function connectCallback(frame) {
             // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
             setMessageInnerHTML("连接成功");
+            //客户端订阅地址
             stompClient.subscribe('/app/subscribeTest', function (response) {
                 setMessageInnerHTML("已成功订阅/app/subscribeTest");
                 var returnData = JSON.parse(response.body);
