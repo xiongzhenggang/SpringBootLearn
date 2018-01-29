@@ -6,10 +6,17 @@
 </head>
 
 <body>
-Welcome<br/><input id="text" type="text" />
+Welcome<br/>
+<input id="username" type="text" />
+<button onclick="stompConnect()">用户姓名建立链接</button>
+<input id="text" type="text" />
 <button onclick="send()">发送消息</button>
+<input id="sendUser" type="text" />
+<button onclick="send2()">给用户发送消息</button>
+<hr/>
 <button onclick="subscribe2()">订阅消息/topic/sendTest</button>
 <button onclick="subscribe1()">订阅消息/topic/subscribeTest</button>
+<button onclick="subscribe3()">用户订阅后，发送指定用户/queue/notifications</button>
 <hr/>
 <button onclick="closeWebSocket()">关闭WebSocket连接</button>
 <hr/>
@@ -24,11 +31,12 @@ Welcome<br/><input id="text" type="text" />
 
     // 获取 STOMP 子协议的客户端对象
     var stompClient = Stomp.over(socket);
-
-    // 向服务器发起websocket连接并发送CONNECT帧
-    stompClient.connect(
-        {},
-        function connectCallback(frame) {
+//发送消息
+// 向服务器发起websocket连接并发送CONNECT帧
+         stompClient.connect(
+            {name: name // Username!
+            },
+         function connectCallback(frame) {
             // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
             setMessageInnerHTML("连接成功");
             //客户端订阅地址
@@ -42,8 +50,7 @@ Welcome<br/><input id="text" type="text" />
             // 连接失败时（服务器响应 ERROR 帧）的回调方法
             setMessageInnerHTML("连接失败");
         }
-    );
-
+    )
     //发送消息
     function send() {
         var message = document.getElementById('text').value;
@@ -54,7 +61,7 @@ Welcome<br/><input id="text" type="text" />
 
     //订阅消息
     function subscribe1() {
-        stompClient.subscribe('/topic/subscribeTest', function (response) {
+        stompClient.subscribe("/topic/subscribeTest", function (response) {
             setMessageInnerHTML("已成功订阅/topic/subscribeTest");
             var returnData = JSON.parse(response.body);
             setMessageInnerHTML("/topic/subscribeTest 你接收到的消息为:" + returnData.responseMessage);
@@ -63,7 +70,7 @@ Welcome<br/><input id="text" type="text" />
 
     //订阅消息
     function subscribe2() {
-        stompClient.subscribe('/topic/sendTest', function (response) {
+        stompClient.subscribe("/topic/sendTest", function (response) {
             setMessageInnerHTML("已成功订阅/topic/sendTest");
             var returnData = JSON.parse(response.body);
             setMessageInnerHTML("/topic/sendTest 你接收到的消息为:" + returnData.responseMessage);
@@ -73,6 +80,21 @@ Welcome<br/><input id="text" type="text" />
     //将消息显示在网页上
     function setMessageInnerHTML(innerHTML) {
         document.getElementById('message').innerHTML += innerHTML + '<br/>';
+    }
+    //用户订阅的信息,以user作为前缀的目的地将会一特殊的方式处理
+     function subscribe3() {
+        stompClient.subscribe("/user/queue/notifications", function (response) {
+            setMessageInnerHTML("已成功订阅/user/queue/notifications");
+            var returnData = JSON.parse(response.body);
+            setMessageInnerHTML("/queue/notifications 你接收到的消息为:" + returnData.responseMessage);
+        });
+    }
+     //上面subscribe3订阅user/queue/notifications地址后用户发送消
+    function send2() {
+        var message = document.getElementById('sendUser').value;
+        var messageJson = JSON.stringify({ "name": message });
+        stompClient.send("/app/spittle", {}, messageJson);
+        setMessageInnerHTML("/app/spittle 你发送的消息:" + message);
     }
 </script>
 

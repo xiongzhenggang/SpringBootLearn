@@ -24,20 +24,6 @@ public class WebSocketUserController {
     private SimpMessagingTemplate messagingTemplate;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-    //  @MessageMapping类似@RequestMapping
-    @MessageMapping("/")
-    //@SendTo 注解表示处理对应请求后要返回订阅的地址，若没有添加@SendTo注解返回的地址为（/topic/sendTest）
-    @SendTo("/topic/")
-    public ServerMessage sendDemo(ClientMessage message) {
-        logger.info("接收到了信息：" + message.getName());
-        return new ServerMessage("你发送的消息为:" + message.getName());
-    }
-    //与@MessageMapping不同的是@SubscribeMapping会直接将请求结果发送给客户端而不经过代理
-    @SubscribeMapping("/")
-    public ServerMessage sub() {
-        logger.info("XXX用户订阅了我。。。");
-        return new ServerMessage("感谢你订阅了我。。。");
-    }
 
     //客户端只要订阅了/topic/subscribeTest主题，调用这个方法即可
     @RequestMapping(value = "serveruUserSendInfo",method = RequestMethod.GET)
@@ -57,10 +43,19 @@ public class WebSocketUserController {
 
     @MessageMapping("/spittle")
     @SendToUser("/queue/notifications")
-    public Notification handleSpittle(Principal principal){
-        Spitter sp = new Spitter(4,principal.getName());
+    public ServerMessage handleSpittle(ClientMessage message){
+        Spitter sp = new Spitter(4,message.getName());
         //一些其他操作
-        System.out.println("其他操作");
-        return new Notification("some actions","ss",2);
+        System.out.println("发来的消息："+message.getName());
+        return new ServerMessage("发给指定用户："+message.getName());
+    }
+
+    @RequestMapping(value = "sendAssageUser",method = RequestMethod.GET)
+    @ResponseBody
+    public void sendAssageUser(ClientMessage message) {
+//        messagingTemplate.convertAndSend("/topic/spittlefeed","发给订阅topic/spittlefeed的");
+        //下面的地址的目的地会变成/user/zhangsan/queue/notifications
+        messagingTemplate.convertAndSendToUser(message.getName(),"/queue/notifications"
+                ,new ServerMessage("主动发送给指定的用户"+message.getName()));
     }
 }

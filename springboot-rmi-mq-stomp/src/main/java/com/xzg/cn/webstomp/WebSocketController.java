@@ -47,6 +47,4 @@ public class WebSocketController {
         return new Spitter(2,"dd");
     }
 
-    //测试对制定的用户发送推送
-
 }

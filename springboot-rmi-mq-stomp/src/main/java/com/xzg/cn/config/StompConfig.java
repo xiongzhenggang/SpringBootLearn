@@ -1,6 +1,8 @@
 package com.xzg.cn.config;
 
+import com.xzg.cn.interceptor.UserInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -10,7 +12,11 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 @Configuration
 @EnableWebSocketMessageBroker
 public class StompConfig extends AbstractWebSocketMessageBrokerConfigurer {
-
+// register your user interceptor by overriding configureClientInboundChannel
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.setInterceptors(new UserInterceptor());
+    }
     @Override
     public void registerStompEndpoints(StompEndpointRegistry stompEndpointRegistry) {
         // 允许使用socketJs方式访问，访问点为webSocketServer，允许跨域
