@@ -15,7 +15,7 @@ public class StompConfig extends AbstractWebSocketMessageBrokerConfigurer {
 // register your user interceptor by overriding configureClientInboundChannel
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.setInterceptors(new UserInterceptor());
+        registration.interceptors(new UserInterceptor());
     }
     @Override
     public void registerStompEndpoints(StompEndpointRegistry stompEndpointRegistry) {

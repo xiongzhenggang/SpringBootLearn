@@ -7,8 +7,6 @@
 
 <body>
 Welcome<br/>
-<input id="username" type="text" />
-<button onclick="stompConnect()">用户姓名建立链接</button>
 <input id="text" type="text" />
 <button onclick="send()">发送消息</button>
 <input id="sendUser" type="text" />
@@ -28,13 +26,12 @@ Welcome<br/>
 <script type="text/javascript">
     // 建立连接对象（还未发起连接）
     var socket = new SockJS("http://localhost:8080/webSocketServer");
-
     // 获取 STOMP 子协议的客户端对象
     var stompClient = Stomp.over(socket);
-//发送消息
-// 向服务器发起websocket连接并发送CONNECT帧
+        // 向服务器发起websocket连接并发送CONNECT帧
          stompClient.connect(
-            {name: name // Username!
+            {
+            name:'xzg'
             },
          function connectCallback(frame) {
             // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
@@ -50,7 +47,7 @@ Welcome<br/>
             // 连接失败时（服务器响应 ERROR 帧）的回调方法
             setMessageInnerHTML("连接失败");
         }
-    )
+    );
     //发送消息
     function send() {
         var message = document.getElementById('text').value;
@@ -67,7 +64,6 @@ Welcome<br/>
             setMessageInnerHTML("/topic/subscribeTest 你接收到的消息为:" + returnData.responseMessage);
         });
     }
-
     //订阅消息
     function subscribe2() {
         stompClient.subscribe("/topic/sendTest", function (response) {
@@ -76,7 +72,6 @@ Welcome<br/>
             setMessageInnerHTML("/topic/sendTest 你接收到的消息为:" + returnData.responseMessage);
         });
     }
-
     //将消息显示在网页上
     function setMessageInnerHTML(innerHTML) {
         document.getElementById('message').innerHTML += innerHTML + '<br/>';
