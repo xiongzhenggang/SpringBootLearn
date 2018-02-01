@@ -54,6 +54,32 @@
             <artifactId>spring-jms</artifactId>
             <version>5.0.3.BUILD-SNAPSHOT</version>
         </dependency>
+        <!--  java.lang.ClassNotFoundException: reactor.io.codec.
+        Codec https://github.com/spring-projects/spring-boot/issues/3459-->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore-nio</artifactId>
+            <version>4.4.8</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.projectreactor/reactor-core -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+            <!--<version>3.0.7.RELEASE</version>-->
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.projectreactor/reactor-net -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-net</artifactId>
+            <!--<version>2.0.8.RELEASE</version>-->
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.19.Final</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
