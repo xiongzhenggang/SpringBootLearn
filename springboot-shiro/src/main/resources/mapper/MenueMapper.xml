@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.us.dao.MenuDao">
+	<resultMap id="BaseResultMap" type="com.us.model.Menu">
+		 <id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="permission_url" property="permissionUrl" jdbcType="VARCHAR" />
+		<result column="method" property="method" jdbcType="VARCHAR" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId"  jdbcType="INTEGER"/>
+		<result column="permission_level" property="permissionLevel"  jdbcType="VARCHAR" />
+	</resultMap>
+<!-- 	resultMap="BaseResultMap" -->
+	<select id="getMenuByRoleId" resultType="java.lang.Integer" >
+         select 
+            m.id as id
+         from 
+         	menu m 
+         	left join role_menu rm on m.id = rm.menu_id
+         where
+         	rm.role_id = #{roleId}
+     </select>
+</mapper>
+ 

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.us.dao.ActivitiUserDao">
+    <resultMap id="userMap" type="com.us.bean.ActivitiUser">
+		<id property="id" column="id"/>
+		<result property="firstName" column="cnname"/>
+		<result property="email" column="email"/>
+    </resultMap>
+    
+    <sql id="queryCondition">
+        <where>
+			<if test="id != null and id != ''">
+				and id = #{id}
+			</if>
+			<if test="firstName != null and firstName != ''">
+				and cnname = #{firstName}
+			</if>
+			<if test="email != null and email != ''">
+				and email = #{email}
+			</if>
+        </where>
+    </sql>
+    	
+    <select id="findUsersByNativeQuery" parameterType="java.util.Map" resultMap="userMap">
+    	SELECT * FROM SYS_USER
+		<include refid="queryCondition" />
+		limit #{firstResult} ,#{maxResults}
+    </select>
+    
+    <select id="getById" parameterType="int" resultMap="userMap">
+    	SELECT * FROM SYS_USER WHERE id =#{id}
+    </select>
+
+	<insert id="create" parameterType="com.us.bean.ActivitiUser">
+        <selectKey resultType="int"  order="AFTER" keyProperty="id" >
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO SYS_USER(
+			id,
+			firstName,
+			email
+		)VALUES(
+			#{id},
+			#{cnname},
+			#{email}
+		)
+    </insert>
+    
+    <delete id="delete" parameterType="int">
+    	DELETE FROM SYS_USER WHERE id = #{id}
+    </delete>
+    
+</mapper>

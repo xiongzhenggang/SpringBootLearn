@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- <mapper namespace="com.us.dao.WebPerDao">
+	<resultMap id="BaseResultMap" type="com.us.model.RoleInfo">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<collection property="menus" ofType="com.us.model.WebPer">
+	        <id column="id" property="id" jdbcType="INTEGER" />
+			<result column="name" property="name" jdbcType="VARCHAR" />
+			<result column="permission_url" property="permissionUrl" jdbcType="VARCHAR" />
+			<result column="method" property="method" jdbcType="VARCHAR" />
+			<result column="web_Route" property="webRoute" jdbcType="VARCHAR" />
+			<result column="description" property="description" jdbcType="VARCHAR" />
+			<result column="parent_id" property="parentId"  jdbcType="INTEGER"/>
+			<result column="permission_level" property="permissionLevel"  jdbcType="VARCHAR" />
+        </collection>
+	</resultMap>
+	<sql id="Base_Column_List">
+		id,
+		name,
+	</sql>
+	<select id="getRoleInfo" resultMap="BaseResultMap">
+         select 
+            r.role_id as id,
+            ro.name,
+			p.name,
+			p.permission_url,
+			p.method,
+			p.web_Route,
+			p.parent_id
+         from 
+         	permission p 
+         	left join role_permission r on p.id = r.permission_id
+         	left  join role ro on ro.role_id=r.role_id
+         where
+         	r.role_id = #{roleId}
+     </select>
+</mapper> -->
+ <mapper namespace="com.us.dao.WebPerDao">
+	<resultMap id="BaseResultMap" type="com.us.model.MenuTree">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="method" property="method" jdbcType="VARCHAR" />
+		<result column="permission_url" property="permissionUrl" jdbcType="VARCHAR" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<!-- <result column="web_Route" property="webRoute" jdbcType="VARCHAR" /> -->
+		<collection property="children" column="id" select="getSubMenu">
+        </collection>
+	</resultMap>
+	<sql id="Base_Column_List">
+		id,
+		name,
+	</sql>
+	<!-- <select id="getMenuTree" resultMap="BaseResultMap">
+        select 
+        	p.id,
+        	p.name,
+        	p.method,
+        	p.web_Route
+        from 
+        	permission p left join role_permission r on p.id = r.permission_id
+        where
+        	r.role_id = #{roleId}
+ 	</select> -->
+ 	<select id="getMenuTree" resultMap="BaseResultMap">
+        select 
+        	id,
+        	name,
+        	method,
+        	permission_url,
+        	description
+        from 
+        	menu 
+        where
+        	parent_id = 0
+ 	</select>
+ 	<select id="getSubMenu" resultMap="BaseResultMap">
+         select 
+         	id,
+         	name,
+         	permission_url,
+         	method,
+        	description
+         from 
+         	 menu
+         where
+			parent_id=#{id}
+     </select>
+</mapper> 
