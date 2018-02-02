@@ -11,3 +11,5 @@
 8. spring Rabbitmq
 9. spring email
 10. spring websocket stomp 
+11. spring apache shiro
+12. spring activiti6
