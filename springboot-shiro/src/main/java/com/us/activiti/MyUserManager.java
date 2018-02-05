@@ -86,7 +86,8 @@ public class MyUserManager implements UserDataManager {
 	public long findUserCountByQueryCriteria(UserQueryImpl query) {
 		// TODO Auto-generated method stub
 		
-		return 0;
+//		return 0;
+		throw new UnsupportedOperationException();
 	}
 ////增加自己的处理
 	@Override
@@ -107,7 +108,8 @@ public class MyUserManager implements UserDataManager {
 	@Override
 	public long findUserCountByNativeQuery(Map<String, Object> parameterMap) {
 		// TODO Auto-generated method stub
-		return 0;
+//		return 0;
+		throw new UnsupportedOperationException();
 	}
 
 }

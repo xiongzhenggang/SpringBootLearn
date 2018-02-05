@@ -43,7 +43,6 @@ public class LoginController {
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(userName, password);
         token.setRememberMe(rememberMe);
-
         try {
             subject.login(token);
         }catch (UnknownAccountException e) {

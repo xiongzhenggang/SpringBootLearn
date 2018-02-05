@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.IdentityService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.task.Task;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class MyService {
+public class MyActivitiService {
 
     @Autowired
     private RuntimeService runtimeService;
@@ -20,10 +21,19 @@ public class MyService {
     @Autowired
     private TaskService taskService;
 
+    @Autowired
+    private IdentityService identityService;
     //启动流程
 	@Transactional
-    public void startProcess(String processDefinitionKey,String businessKey,Map<String,Object> variables) {
-        runtimeService.startProcessInstanceByKey(processDefinitionKey,businessKey,variables);
+    public void startProcess(String processDefinitionKey
+    		,String businessKey
+    		,Map<String,Object> variables
+    		,String currentUserId) {
+		  //利用initiator功能，设置一个名称（不是变量而是变量名）到启动事件上，并且在启动流程时调用一些下面的方法
+		//这样流程启动之后如果任务流转至”重新修改”节点则会自动把任务分配给启动流程的人。启动节点设置initiaor为applyUserId，调整节点设置于${applyUserId}
+        identityService.setAuthenticatedUserId(currentUserId);
+        
+		runtimeService.startProcessInstanceByKey(processDefinitionKey,businessKey,variables);
     }
 
 	//查询个人任务
@@ -77,18 +87,21 @@ public class MyService {
                 .list();
   	return list;  
   }
-    /**将组任务指定个人任务(拾取任务)*/    
+    /**将组任务指定个人任务(拾取任务)
+     * 以下为任务认领的几种方式:
+	 * 1) taskService.setAssignee(String taskId, String userId);
+	 * 2) taskService.claim(String taskId, String userId);
+	 * 3) taskService.setOwner(String taskId, String userId);
+	 * setAssignee和claim两个的区别是在认领任务时:
+	 * claim会检查该任务是否已经被认领，如果被认领则会抛出ActivitiTaskAlreadyClaimedException,而setAssignee不会进行这样的检查，其他方面两个方法效果一致。
+	 * setOwner和setAssignee的区别在于
+	 * setOwner实在代理任务时使用，代表着任务的归属者，而这时，setAssignee代表的时代理办理者，
+	 * 举个例子来说，公司总经理现在有个任务taskA，去核实一下本年度的财务报表，他现在又很忙没时间，于是将该任务委托给其助理进行办理，此时，就应该这么做：
+	 * taskService.setOwner(taskA.getId(), 总经理.getId());
+	 * taskService.setAssignee/claim(taskA.getId(), 助理.getId());
+     * */    
     public void claim(String taskId,String userName){   
     	taskService.claim(taskId, userName);
-    	/*
-    	 * 一下都可以认领任务
-    	 * taskService.setAssignee(String taskId, String userId);
-    	taskService.claim(String taskId, String userId);
-    	taskService.setOwner(String taskId, String userId);
-    	
-    	setAssignee和claim两个的区别是在认领任务时，
-		claim会检查该任务是否已经被认领，如果被认领则会抛出ActivitiTaskAlreadyClaimedException 
-    	*/
     }  
     /**向组任务中添加成员*/    
     public void addGroupUser(String taskId, String userId){    
