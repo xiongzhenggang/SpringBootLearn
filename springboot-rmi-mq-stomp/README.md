@@ -2,10 +2,14 @@
 ### 主要配置均在项目com.xzg.cn.config下可见
 1. rabbitmq配置
 * 为方便测试使用，这里使用docker启动rabbit服务
-```sh
-docker run -d --name rabbitmq --publish 5671:5671  \
- --publish 5672:5672 --publish 4369:4369 --publish 25672:25672 \ 
- --publish 15671:15671 --publish 15672:15672  rabbitmq:management
+```sh 
+docker run -it --name rabbitmq -p 5671:5671 \
+-p 5672:5672   -p 4369:4369  -p 15671:15671  -p 25672:25672 \
+-p 15672:15672  -p 61613:61613 rabbitmq:management /bin/bash
+# /bin/bash 是为了执行：rabbitmq-plugins enable rabbitmq_stomp
+# nohup rabbitmq-server后台运行，后增加用户和密码rabbitmqctl  add_user  username password
+# abbitmqctl  set_user_tags  username administrator 为user增加角色否则无法登陆
+# 执行加载stomp插件后重启运行生效
 ```
 * 这里使用rabbit management可以通过浏览器登陆看到http://ip:15672 用户名密码为guest
 

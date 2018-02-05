@@ -30,9 +30,7 @@ Welcome<br/>
     var stompClient = Stomp.over(socket);
         // 向服务器发起websocket连接并发送CONNECT帧
          stompClient.connect(
-            {
-            name:'xzg'
-            },
+            {},
          function connectCallback(frame) {
             // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
             setMessageInnerHTML("连接成功");

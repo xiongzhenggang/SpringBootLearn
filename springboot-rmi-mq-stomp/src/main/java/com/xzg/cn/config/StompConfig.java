@@ -37,10 +37,10 @@ public class StompConfig extends AbstractWebSocketMessageBrokerConfigurer {
                 .setRelayHost("192.165.1.105")
                 //amqp:5672 clustering:5672  http:15672
                 .setRelayPort(61613)
-                .setClientLogin("guest")
-                .setClientPasscode("guest")
-                .setSystemLogin("guest")
-                .setSystemPasscode("guest")
+                .setClientLogin("xzg")
+                .setClientPasscode("xzg")
+//                .setSystemLogin("xzg")
+//                .setSystemPasscode("xzg")
                 .setSystemHeartbeatSendInterval(5000)
                 .setSystemHeartbeatReceiveInterval(4000);
         // 全局使用的消息前缀（客户端订阅路径上会体现出来）
