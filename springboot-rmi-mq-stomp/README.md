@@ -7,8 +7,8 @@ docker run -it --name rabbitmq -p 5671:5671 \
 -p 5672:5672   -p 4369:4369  -p 15671:15671  -p 25672:25672 \
 -p 15672:15672  -p 61613:61613 rabbitmq:management /bin/bash
 # /bin/bash 是为了执行：rabbitmq-plugins enable rabbitmq_stomp
-# nohup rabbitmq-server后台运行，后增加用户和密码rabbitmqctl  add_user  username password
-# abbitmqctl  set_user_tags  username administrator 为user增加角色否则无法登陆
+# nohup rabbitmq-server后台运行，后增加用户和密码: rabbitmqctl  add_user  username password
+# 为user增加角色否则无法登陆; rabbitmqctl  set_user_tags  username administrator 
 # 执行加载stomp插件后重启运行生效
 ```
 * 这里使用rabbit management可以通过浏览器登陆看到http://ip:15672 用户名密码为guest

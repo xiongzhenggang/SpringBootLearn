@@ -10,11 +10,11 @@ Welcome<br/>
 <input id="text" type="text" />
 <button onclick="send()">发送消息</button>
 <input id="sendUser" type="text" />
-<button onclick="send2()">给用户发送消息</button>
+<button onclick="send2()">给订阅notifications的用户发消息</button>
 <hr/>
-<button onclick="subscribe2()">订阅消息/topic/sendTest</button>
 <button onclick="subscribe1()">订阅消息/topic/subscribeTest</button>
-<button onclick="subscribe3()">用户订阅后，发送指定用户/queue/notifications</button>
+<button onclick="subscribe2()">订阅消息/topic/sendTest</button>
+<button onclick="subscribe3()">订阅用户/user/queue/notifications</button>
 <hr/>
 <button onclick="closeWebSocket()">关闭WebSocket连接</button>
 <hr/>
@@ -33,12 +33,12 @@ Welcome<br/>
             {},
          function connectCallback(frame) {
             // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
-            setMessageInnerHTML("连接成功");
-            //客户端订阅地址
+            setMessageInnerHTML("浏览器: 连接成功");
+            //启动时通知/app/subscribeTest服务端的地址
             stompClient.subscribe('/app/subscribeTest', function (response) {
-                setMessageInnerHTML("已成功订阅/app/subscribeTest");
+                setMessageInnerHTML("浏览器: 成功订阅/app/subscribeTest");
                 var returnData = JSON.parse(response.body);
-                setMessageInnerHTML("/app/subscribeTest 你接收到的消息为:" + returnData.responseMessage);
+                setMessageInnerHTML("服务端： /app/subscribeTest接发来的消息为:" + returnData.responseMessage);
             });
         },
         function errorCallBack(error) {
@@ -46,28 +46,28 @@ Welcome<br/>
             setMessageInnerHTML("连接失败");
         }
     );
-    //发送消息
+    //发送地址为/app/sendTest消息，后端返回到订阅/topic/subscribeTest的所有用户
     function send() {
         var message = document.getElementById('text').value;
         var messageJson = JSON.stringify({ "name": message });
         stompClient.send("/app/sendTest", {}, messageJson);
-        setMessageInnerHTML("/app/sendTest 你发送的消息:" + message);
+        setMessageInnerHTML("浏览器: 向app/sendTest发送:" + message);
     }
 
-    //订阅消息
+    //订阅topic消息
     function subscribe1() {
         stompClient.subscribe("/topic/subscribeTest", function (response) {
-            setMessageInnerHTML("已成功订阅/topic/subscribeTest");
+            setMessageInnerHTML("浏览器： 已成功订阅/topic/subscribeTest");
             var returnData = JSON.parse(response.body);
-            setMessageInnerHTML("/topic/subscribeTest 你接收到的消息为:" + returnData.responseMessage);
+            setMessageInnerHTML("服务端： 通过订阅/topic/subscribeTest发送消息:" + returnData.responseMessage);
         });
     }
-    //订阅消息
+    //订阅/topic/sendTest消息
     function subscribe2() {
         stompClient.subscribe("/topic/sendTest", function (response) {
-            setMessageInnerHTML("已成功订阅/topic/sendTest");
+            setMessageInnerHTML("浏览器： 成功订阅/topic/sendTest");
             var returnData = JSON.parse(response.body);
-            setMessageInnerHTML("/topic/sendTest 你接收到的消息为:" + returnData.responseMessage);
+            setMessageInnerHTML("服务端： 通过订阅/topic/sendTest接收到的消息为:" + returnData.responseMessage);
         });
     }
     //将消息显示在网页上
@@ -77,9 +77,9 @@ Welcome<br/>
     //用户订阅的信息,以user作为前缀的目的地将会一特殊的方式处理
      function subscribe3() {
         stompClient.subscribe("/user/queue/notifications", function (response) {
-            setMessageInnerHTML("已成功订阅/user/queue/notifications");
+            setMessageInnerHTML("浏览器： 成功订阅/user/queue/notifications");
             var returnData = JSON.parse(response.body);
-            setMessageInnerHTML("/queue/notifications 你接收到的消息为:" + returnData.responseMessage);
+            setMessageInnerHTML("服务端： 通过订阅/queue/notifications 发送消息为: " + returnData.responseMessage);
         });
     }
      //上面subscribe3订阅user/queue/notifications地址后用户发送消

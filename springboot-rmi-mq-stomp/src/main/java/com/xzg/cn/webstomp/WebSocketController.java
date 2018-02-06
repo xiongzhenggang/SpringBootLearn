@@ -29,7 +29,7 @@ public class WebSocketController {
         return new ServerMessage("你发送的消息为:" + message.getName());
     }
 
-    //与@MessageMapping不同的是@SubscribeMapping会直接将请求结果发送给客户端而不经过代理
+    //与@MessageMapping不同的是@SubscribeMapping会直接将请求结果发送给客户端而不经过代理，直接将结果返回给发送的客户端
     @SubscribeMapping("/subscribeTest")
     public ServerMessage sub() {
         logger.info("XXX用户订阅了我。。。");
@@ -44,7 +44,7 @@ public class WebSocketController {
         messagingTemplate.convertAndSend("/topic/subscribeTest", new ServerMessage("服务器主动推到subscribeTest的数据"));
         //服务端推送信息到客户端订阅/topic/subscribeTest的地址
         messagingTemplate.convertAndSend("/topic/sendTest", new ServerMessage("服务器主动推到sendTest的数据"));
-        return new Spitter(2,"dd");
+        return new Spitter(2,"推送所有订阅的用户");
     }
 
 }

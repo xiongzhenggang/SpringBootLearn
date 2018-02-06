@@ -209,3 +209,42 @@ STOMP帧:STOMP帧由命令，一个或多个头信息、一个空行及负载（
     }
 ```
 5.  修改配置文件，启动rabbitmq作为代理使用
+* 为方便测试使用，这里使用docker启动rabbit服务
+```sh 
+docker run -it --name rabbitmq -p 5671:5671 \
+-p 5672:5672   -p 4369:4369  -p 15671:15671  -p 25672:25672 \
+-p 15672:15672  -p 61613:61613 rabbitmq:management /bin/bash
+# -it 和/bin/bash 是为了执行能进入后台执行下面的命令
+# 1、加载rabbitmq的stomp插件: rabbitmq-plugins enable rabbitmq_stomp
+# 2、重启rabbitmq服务，stomp插件生效后台运行： rabbitmq-server &
+# 3、增加新用户和密码: rabbitmqctl  add_user  username password
+# 4、为user增加角色否则无法登陆; rabbitmqctl  set_user_tags  username administrator
+# 5、为该用户增加远程链接等权限：rabbitmqctl set_permissions -p / username ".*" ".*" ".*" 
+```
+* [rabbitmq 配置stomp插件官方](http://www.rabbitmq.com/stomp.html)
+
+6. 将原来的配置文件configureMessageBroker方法修改为如下：
+```java
+ @Override
+    public void configureMessageBroker(MessageBrokerRegistry registry) {
+        // 订阅Broker名称
+        //enableSimpleBroker 是spring提供简单的代理，基于内存实现，如果需要更高级功能可以选择rabbit、activitie mq
+//        registry.enableSimpleBroker("/queue", "/topic");
+        //启用stomp代理中继 启动Rabbit stomp插件： rabbitmq-plugins enable rabbitmq_stomp
+        registry.enableStompBrokerRelay("/topic","/queue")
+                .setRelayHost("192.168.1.101")
+                //amqp:5672 clustering:5672  http:15672
+                .setRelayPort(61613)
+                .setClientLogin("xzg")
+                .setClientPasscode("xzg")
+                .setSystemLogin("xzg")
+                .setSystemPasscode("xzg")
+                .setSystemHeartbeatSendInterval(5000)
+                .setSystemHeartbeatReceiveInterval(4000);
+        // 全局使用的消息前缀（客户端订阅路径上会体现出来）
+        registry.setApplicationDestinationPrefixes("/app");
+        // 点对点使用的订阅前缀（客户端订阅路径上会体现出来），不设置的话，默认也是/user/
+         registry.setUserDestinationPrefix("/user/");
+    }
+```
+7. 重启后使用和简单代理使用相同即可。可访问http://ip:15672 网页访问查看
