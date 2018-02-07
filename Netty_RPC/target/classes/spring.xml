@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.xzg.nettyRpc.*"/>
+
+    <context:property-placeholder location="classpath:rpc.properties"/>
+
+    <!-- <bean id="serviceDiscovery" class="com.xzg.nettyRpc.registry.ServiceDiscovery">
+        <constructor-arg name="registryAddress" value="${registry.address}"/>
+    </bean>
+
+    <bean id="rpcClient" class="com.nettyrpc.client.RpcClient">
+        <constructor-arg name="serviceDiscovery" ref="serviceDiscovery"/>
+    </bean>
+
+    <bean id="serviceRegistry" class="com.nettyrpc.registry.ServiceRegistry">
+        <constructor-arg name="registryAddress" value="${registry.address}"/>
+    </bean>
+
+    <bean id="rpcServer" class="com.nettyrpc.server.RpcServer">
+        <constructor-arg name="serverAddress" value="${server.address}"/>
+        <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
+    </bean> -->
+    
+ <!-- 配置服务注册组件 -->
+    <bean id="serviceRegistry" class="com.xzg.nettyRpc.registry.ServiceRegistry">
+   <!--  构造器注入 -->
+        <constructor-arg name="registryAddress" value="${registry.address}"/>
+    </bean>
+
+    <!-- 配置 RPC 服务器 -->
+    <bean id="rpcServer" class="com.xzg.nettyRpc.server.RpcServer">
+        <constructor-arg name="serverAddress" value="${server.address}"/>
+        <constructor-arg name="serviceRegistry" ref="serviceRegistry"/>
+    </bean>
+    <!-- <context:property-placeholder location="classpath:config.properties"/> -->
+
+    <!-- 配置服务发现组件 -->
+    <bean id="serviceDiscovery" class="com.xzg.nettyRpc.registry.ServiceDiscovery">
+        <constructor-arg name="registryAddress" value="${registry.address}"/>
+    </bean>
+
+    <!-- 配置 RPC 代理 -->
+    <bean id="rpcProxy" class="com.xzg.nettyRpc.client.RpcProxy">
+        <constructor-arg name="serviceDiscovery" ref="serviceDiscovery"/>
+    </bean>
+</beans>
