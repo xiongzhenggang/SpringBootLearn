@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.us.service.MyActivitiService;
 
 @RestController
-public class MyTestController {
+public class TestActivitiController {
 
     @Autowired
     private MyActivitiService myService;
@@ -25,7 +26,7 @@ public class MyTestController {
     public void startProcessInstance(@RequestParam String userName) {
     	Map<String, Object> variables = new HashMap<String, Object>();
     	//启动时设置项目的所属人
-        variables.put("userName", "xzg");//所属人
+        variables.put("userName", "xzg");//设置下一级所属人
 //        variables.put("nextUserName", "zhangsan");//下一个处理者
     	//启动一个流程，userName为启动者，即为该流程的所属者
         myService.startProcess("testProcess","businessKey1",variables,userName);
@@ -35,7 +36,7 @@ public class MyTestController {
     @RequestMapping(value="/getMytasks", method= {RequestMethod.GET,RequestMethod.POST})
     public List<TaskRepresentation> getTasks(@RequestParam String userName) {
     	//根据
-        List<Task> tasks = myService.getTasks(userName);
+        List<Task> tasks = myService.getTasksByUser(userName);
         List<TaskRepresentation> dtos = new ArrayList<TaskRepresentation>();
         for (Task task : tasks) {
             dtos.add(new TaskRepresentation(task.getId(), task.getName()));
@@ -52,7 +53,10 @@ public class MyTestController {
     //根据代办人查询
     @RequestMapping(value = "/getTasksByCandidateUser", method = {RequestMethod.GET,RequestMethod.POST})
     public List<TaskRepresentation>  getCandiateUser(@RequestParam String userName) {
+    	//1、获取该用户的代办任务
     	List<Task> tasks = myService.getCandiateUser(userName);
+    	//2、根据用户名查询对应的角色后，取得对应的组任务的task后合并返回
+//    	tasks.addAll(task2);
     	List<TaskRepresentation> dtos = new ArrayList<TaskRepresentation>();
         for (Task task : tasks) {
             dtos.add(new TaskRepresentation(task.getId(), task.getName()));
@@ -71,13 +75,25 @@ public class MyTestController {
        return dtos;
     }
     
-    
-    //认领任务
+  //认领任务
     @RequestMapping(value = "/claimUser", method = {RequestMethod.GET,RequestMethod.POST})
     public void  claimUser(@RequestParam String userName,@RequestParam String taskId) {
         myService.claim(taskId,userName);
     }
     
+  //添加批注信息
+    @RequestMapping(value = "/addComment", method = {RequestMethod.GET,RequestMethod.POST})
+    public void  addComment(@RequestParam String userName
+    		,@RequestParam String taskId
+    		,@RequestParam String msg) {
+        myService.addComment(userName, taskId, msg);
+    }
+    
+    //查询批注信息
+    @RequestMapping(value = "/getProcessComments", method = {RequestMethod.GET,RequestMethod.POST})
+    public List<Comment>  getProcessComments(@RequestParam String taskId) {
+        return myService.getProcessComments(taskId);
+    }
     static class TaskRepresentation {
         private String id;
         private String name;

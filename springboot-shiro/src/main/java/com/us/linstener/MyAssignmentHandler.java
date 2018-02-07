@@ -17,7 +17,7 @@ public class MyAssignmentHandler implements TaskListener {
 	    delegateTask.addCandidateUser("lisi");
 	    delegateTask.addCandidateUser("wangwu");
 	    //Adds the given group as candidate group to this task
-	    delegateTask.addCandidateGroup("admin");
+	    delegateTask.addCandidateGroup("test");
 	  }
 
 	}

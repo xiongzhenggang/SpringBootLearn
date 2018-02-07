@@ -1,16 +1,23 @@
 package com.us.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.history.HistoricActivityInstance;
+import org.activiti.engine.impl.identity.Authentication;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 public class MyActivitiService {
@@ -23,6 +30,9 @@ public class MyActivitiService {
 
     @Autowired
     private IdentityService identityService;
+    
+    @Autowired
+    private HistoryService historyService;
     //启动流程
 	@Transactional
     public void startProcess(String processDefinitionKey
@@ -38,10 +48,21 @@ public class MyActivitiService {
 
 	//查询个人任务
 	@Transactional
-    public List<Task> getTasks(String assignee) {
+    public List<Task> getTasksByUser(String assignee) {
 		//Only select tasks which are assigned to the given user
-        return taskService.createTaskQuery().taskAssignee(assignee).list();
+        return taskService
+        		.createTaskQuery()
+        		.taskAssignee(assignee)
+        		.list();
     }
+	/*//根据角色查询已认领的任务
+	public List<Task> getTasksByRole(String roleName){
+		
+		return taskService
+				.createTaskQuery()
+				.tas
+	}*/
+	
 	//增加任务id完成任务
 	@Transactional
 	public void sovleTask(String taskId,boolean agreen){
@@ -102,7 +123,8 @@ public class MyActivitiService {
      * */    
     public void claim(String taskId,String userName){   
     	taskService.claim(taskId, userName);
-    }  
+    } 
+    
     /**向组任务中添加成员*/    
     public void addGroupUser(String taskId, String userId){    
     	taskService.addCandidateUser(taskId, userId);    
@@ -112,4 +134,41 @@ public class MyActivitiService {
     	taskService.deleteCandidateUser(taskId, userId);    
     }
     
+    //添加批注
+    public void addComment(String userName,String taskId,String msg){
+    // 由于流程用户上下文对象是线程独立的，所以要在需要的位置设置，要保证设置和获取操作在同一个线程中
+       Authentication.setAuthenticatedUserId(userName);//批注人的名称  一定要写，不然查看的时候不知道人物信息
+        // 添加批注信息
+       taskService.addComment(taskId, null, msg);//comment为批注内容
+    }
+    //获取批注信息
+    public List<Comment> getProcessComments(String taskId) {
+        List<Comment> historyCommnets = new ArrayList<>();
+//         1) 获取流程实例的ID
+        Task task = this.taskService
+        			.createTaskQuery()
+        			.taskId(taskId)
+        			.singleResult();
+        ProcessInstance pi = runtimeService
+        			.createProcessInstanceQuery()
+        			.processInstanceId(task.getProcessInstanceId())
+        			.singleResult();
+//       2）通过流程实例查询所有的(用户任务类型)历史活动   
+        List<HistoricActivityInstance> hais = historyService
+        		.createHistoricActivityInstanceQuery()
+        		.processInstanceId(pi.getId())
+        		.activityType("userTask")
+        		.list();
+//       3）查询每个历史任务的批注
+        for (HistoricActivityInstance hai : hais) {
+            String historytaskId = hai.getTaskId();
+            List<Comment> comments = taskService.getTaskComments(historytaskId);
+            // 4）如果当前任务有批注信息，添加到集合中
+            if(comments!=null && comments.size()>0){
+                historyCommnets.addAll(comments);
+            }
+        }
+//       5）返回
+         return historyCommnets;
+    }    
 }
