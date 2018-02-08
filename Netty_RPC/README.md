@@ -1,5 +1,5 @@
 ## 主要对netty的学习，最终实现netty + zookeeper 实现一个基本的RPC
-** 1. 使用java中的socket 实现最初基本的RPC . com.xzg.javaSimpleRpc包下**
+* 1. 使用java中的socket 实现最初基本的RPC . com.xzg.javaSimpleRpc包下
 1) 定义客户端和服务端调用的接口（因为是本地这里服务端省略EchoService接口，直接使用客户端的接口）
 ```java
 public interface EchoService {
@@ -163,8 +163,11 @@ public class Server {
 }
 ```
 
-** 2. 包含一些Java的设计模式可参考[java部分设计模式](https://github.com/xiongzhenggang/xiongzhenggang.github.io/tree/master/java23%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F) **
+* 2. 包含一些Java的设计模式可参考[java部分设计模式](https://github.com/xiongzhenggang/xiongzhenggang.github.io/tree/master/java23%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F) **
 
-** 3. netty 的学习了解 **
+* 3. netty 的学习了解 
 
-** 4. 搭建zookeeper 使用netty 实现功能更强大的RPC **
+* 4. 搭建zookeeper 使用netty 实现功能更强大的RPC 
+```
+docker run -p 2181:2181 -p 2888:2888 -p 3888:3888 -d jplock/zookeeper
+```

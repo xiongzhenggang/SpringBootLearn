@@ -21,8 +21,12 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 /**
+ * Copyright: Copyright (c) 2018 LanRu-Caifu
  * @author xzg
- *	客户端
+ * 2018年2月8日
+ * @ClassName: RpcClient.java
+ * @Description: 客户端
+ * @version: v1.0.0
  */
 public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
 
@@ -40,6 +44,7 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
         this.port = port;
     }
 
+    
     @Override
     public void channelRead0(ChannelHandlerContext ctx, RpcResponse response) throws Exception {
         this.response = response;

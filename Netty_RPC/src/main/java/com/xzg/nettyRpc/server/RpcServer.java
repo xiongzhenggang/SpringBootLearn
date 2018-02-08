@@ -32,10 +32,10 @@ import com.xzg.nettyRpc.registry.ServiceRegistry;
 
 /**
  * @author xzg
- *	rpc服务端，
- *实现ApplicationContextAware的bean，会在Bean初始化的时候自动调用setApplicationContext，
- *然后就可以获取spring的上下文，通过spring的上下文就可以获取到spring的一些信息，还可以获取其他的bean
- *实现InitializingBean，在bean初始化之前会调用afterPropertiesSet()
+ *	rpc服务端，（spring管理注入）
+ *	实现ApplicationContextAware的bean，会在Bean初始化的时候自动调用setApplicationContext，
+ *	然后就可以获取spring的上下文，通过spring的上下文就可以获取到spring的一些信息，还可以获取其他的bean
+ *	实现InitializingBean，在bean初始化之前会调用afterPropertiesSet()
  */
 public class RpcServer implements ApplicationContextAware, InitializingBean {
 
@@ -64,6 +64,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
     }
 
     /** 
+     * 实现setApplicationContext接口
      * rpcServer初始化的时候调用，目的是将所有添加了注解RpcService的注解类找到
      * 获取其接口名称，作为key，添加该注解的类作为value封装到handlemap中。
      */
@@ -72,7 +73,9 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
         Map<String, Object> serviceBeanMap = ctx.getBeansWithAnnotation(RpcService.class);
         if (MapUtils.isNotEmpty(serviceBeanMap)) {
             for (Object serviceBean : serviceBeanMap.values()) {
+            	//获取使用了@RpcService的所有接口，放入handlerMap
                 String interfaceName = serviceBean.getClass().getAnnotation(RpcService.class).value().getName();
+                LOGGER.info("收集使用了@RpcService的类："+interfaceName);
                 handlerMap.put(interfaceName, serviceBean);
             }
         }
@@ -94,7 +97,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
                     @Override
                     public void initChannel(SocketChannel channel) throws Exception {
                         channel.pipeline()
-                        	.addLast(new  LengthFieldBasedFrameDecoder(65536,0,4,0,0))// 处理tcp粘包问题
+                        	.addLast(new LengthFieldBasedFrameDecoder(65536,0,4,0,0))// 处理tcp粘包问题
                             .addLast(new RpcDecoder(RpcRequest.class)) // 服务端，将 RPC 请求进行解码（为了处理请求）
                             .addLast(new RpcEncoder(RpcResponse.class)) // 服务端，将 RPC 响应进行编码（为了返回响应）
                             .addLast(new RpcHandler(handlerMap)); // 做后处理 RPC 请求

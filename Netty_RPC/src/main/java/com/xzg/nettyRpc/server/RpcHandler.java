@@ -1,5 +1,6 @@
 package com.xzg.nettyRpc.server;
 
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -14,8 +15,8 @@ import com.xzg.nettyRpc.protocol.RpcRequest;
 import com.xzg.nettyRpc.protocol.RpcResponse;
 /**
  * @author xzg
- *	RpcHandler中处理 RPC 请求，只需扩展 Netty 的SimpleChannelInboundHandler抽象类即可
- *SimpleChannelInboundHandler常见的处理器是接收到解码后的消息并应用一些业务逻辑到这些数据
+ * RpcHandler中处理 RPC 请求，只需扩展 Netty 的SimpleChannelInboundHandler抽象类即可
+ * SimpleChannelInboundHandler常见的处理器是接收到解码后的消息并应用一些业务逻辑到这些数据
  */
 public class RpcHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
@@ -27,7 +28,7 @@ public class RpcHandler extends SimpleChannelInboundHandler<RpcRequest> {
         this.handlerMap = handlerMap;
     }
 
-    @Override
+   /* @Override
     public void channelRead0(final ChannelHandlerContext ctx, RpcRequest request) throws Exception {
         RpcResponse response = new RpcResponse();
         response.setRequestId(request.getRequestId());
@@ -39,10 +40,28 @@ public class RpcHandler extends SimpleChannelInboundHandler<RpcRequest> {
         } catch (Throwable t) {
             response.setError(t);
         }
-        //
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+    }*/
+    @Override
+    public void channelRead0(final ChannelHandlerContext ctx,final RpcRequest request) throws Exception {
+        RpcServer.submit(() -> {
+        	 LOGGER.debug("Receive request " + request.getRequestId());
+             RpcResponse response = new RpcResponse();
+             response.setRequestId(request.getRequestId());
+             try {
+                 Object result = handle(request);
+                 response.setResult(result);
+             } catch (Throwable t) {
+                 response.setError(t);
+                 LOGGER.error("RPC Server handle request error",t);
+             }
+             ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE).addListener(new ChannelFutureListener() {
+                 public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                     LOGGER.debug("Send response for request " + request.getRequestId());
+                 }
+             });
+        });
     }
-
     /**
      * @param request
      * @return
@@ -69,6 +88,7 @@ public class RpcHandler extends SimpleChannelInboundHandler<RpcRequest> {
         return serviceFastMethod.invoke(serviceBean, parameters);
     }
 
+    //处理异常信息
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         LOGGER.error("server caught exception", cause);
