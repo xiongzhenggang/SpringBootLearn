@@ -11,7 +11,7 @@ public class Caller {
                 new Class<?>[]{EchoService.class},
               //DynamicProxyHandler为获取服务端返回的对象包装成代理
                 new DynamicProxyHandler());
-        //客户端使用
+        //客户端使用，连续
         for (int i = 0; i < 3; i++) {
             System.out.println(echo.echo(String.valueOf(i)));
         }
