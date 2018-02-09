@@ -167,7 +167,168 @@ public class Server {
 
 * 3. netty 的学习了解 
 
-* 4. 搭建zookeeper 使用netty 实现功能更强大的RPC 
-```
+* 4. 搭建zookeeper 使用netty 实现功能更强大的RPC 。整个项目在com.xzg.nettyRpc
+* 使用doker启动zk
+```sh
 docker run -p 2181:2181 -p 2888:2888 -p 3888:3888 -d jplock/zookeeper
 ```
+
+* 项目核心解释：
+```
+1. 启动服务端
+通过new ClassPathXmlApplicationContext("server-spring.xml"); 会直接加载服务端组件，并在初始化
+时，启动netty服务端（在pipeline中加入编码解码功能以及处理客户端调用的接口实现功能）。并且将服务端的ip port添加到zookeeper上。
+2. 启动客户端
+调用客户端代理rpcProxy执行，先从zk中取得服务端的ip port后 -> 调用客户端的netty服务发送调用的接口信息 -> 阻塞等待服务端返回的结果
+```
+* 代码部分
+RpcBootstrap 启动服务端
+```java
+public class RpcBootstrap {
+
+	 @SuppressWarnings("resource")
+	public static void main(String[] args) {
+		//首先加载启动服务端。监听客户端的到来
+	        new ClassPathXmlApplicationContext("server-spring.xml");
+}
+}
+```
+RpcServer服务收集自定义注解接口
+```java
+ /** 
+     * 实现setApplicationContext接口
+     * rpcServer初始化的时候调用，目的是将所有添加了注解RpcService的注解类找到
+     * 获取其接口名称，作为key，添加该注解的类作为value封装到handlemap中。
+     */
+    public void setApplicationContext(ApplicationContext ctx) throws BeansException {
+    	// 获取所有带有 RpcService 注解的 Spring Bean
+        Map<String, Object> serviceBeanMap = ctx.getBeansWithAnnotation(RpcService.class);
+        if (MapUtils.isNotEmpty(serviceBeanMap)) {
+            for (Object serviceBean : serviceBeanMap.values()) {
+            	//获取使用了@RpcService的所有接口，放入handlerMap
+                String interfaceName = serviceBean.getClass().getAnnotation(RpcService.class).value().getName();
+                LOGGER.info("收集使用了@RpcService的类："+interfaceName);
+                handlerMap.put(interfaceName, serviceBean);
+            }
+        }
+    }
+/**
+     * 在bean初始化之前会调用afterPropertiesSet()
+     * 通过初始化时，启动netty—rpcserver。并且在通道中添加相应的处理器。
+     * 其中RpcHandler处理器的作用为
+     */
+ public void afterPropertiesSet() throws Exception {
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        try {
+        	//启动服务端
+            ServerBootstrap bootstrap = new ServerBootstrap();
+            bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+                .childHandler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    public void initChannel(SocketChannel channel) throws Exception {
+                        channel.pipeline()
+                        	.addLast(new LengthFieldBasedFrameDecoder(65536,0,4,0,0))// 处理tcp粘包问题
+                            .addLast(new RpcDecoder(RpcRequest.class)) // 服务端，将 RPC 请求进行解码（为了处理请求）
+                            .addLast(new RpcEncoder(RpcResponse.class)) // 服务端，将 RPC 响应进行编码（为了返回响应）
+                            .addLast(new RpcHandler(handlerMap)); // 做后处理 RPC 请求
+                    }
+                })
+                .option(ChannelOption.SO_BACKLOG, 128)
+                .childOption(ChannelOption.SO_KEEPALIVE, true);
+
+            String[] array = serverAddress.split(":");
+            String host = array[0];
+            int port = Integer.parseInt(array[1]);
+
+            ChannelFuture future = bootstrap.bind(host, port).sync();
+            LOGGER.debug("server started on port {}", port);
+            if (serviceRegistry != null) {
+                serviceRegistry.register(serverAddress); // 注册服务地址
+            }
+
+            future.channel().closeFuture().sync();
+        } finally {
+            workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
+        }
+    }	
+```
+客户端代理类RpcProxy：取得zk中服务端的地址后，调用客户端执行
+```java
+    public <T> T create(Class<?> interfaceClass) {
+        return (T) Proxy.newProxyInstance(
+            interfaceClass.getClassLoader(),
+            new Class<?>[]{interfaceClass},
+            /**
+             * @author xzg
+             *	newProxyInstance第三个参数，重写invoke方法
+             */
+            new InvocationHandler() {
+            	//invoke方法主要是和服务端通信获取服务端发送过来的代理对象
+                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                	//将客户端发送的请求封装对象，序列化传输
+                    RpcRequest request = new RpcRequest(); // 创建并初始化 RPC 请求
+                    request.setRequestId(UUID.randomUUID().toString());
+                    request.setClassName(method.getDeclaringClass().getName());
+                    request.setMethodName(method.getName());
+                    request.setParameterTypes(method.getParameterTypes());
+                    request.setParameters(args);
+                    //zookeeper中的发现服务目的是通过zookeeper作为服务端的管理者，当多个服务做负载均衡可以不用人工去干预
+                    if (serviceDiscovery != null) {
+                        serverAddress = serviceDiscovery.discover(); // 发现服务
+                    }
+
+                    String[] array = serverAddress.split(":");
+                    String host = array[0];
+                    int port = Integer.parseInt(array[1]);
+
+                    RpcClient client = new RpcClient(host, port); // 初始化 RPC 客户端
+                    RpcResponse response = client.send(request); // 通过 RPC 客户端发送 RPC 请求并获取 RPC 响应
+
+                    if (response.isError()) {
+                        throw response.getError();
+                    } else {
+                        return response.getResult();
+                    }
+                }
+            }
+        );
+    }
+```
+客户端执行程序RpcClient
+```java
+  public RpcResponse send(RpcRequest request) throws Exception {
+        EventLoopGroup group = new NioEventLoopGroup();
+        try {
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.group(group)
+            .channel(NioSocketChannel.class)
+                .handler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    public void initChannel(SocketChannel channel) throws Exception {
+                        channel.pipeline()
+                            .addLast(new RpcEncoder(RpcRequest.class)) // 将 RPC 请求进行编码（为了发送请求）
+                            .addLast(new RpcDecoder(RpcResponse.class)) // 将 RPC 响应进行解码（为了处理响应）
+                            .addLast(RpcClient.this); // 使用 RpcClient 发送 RPC 请求
+                    }
+                })
+                .option(ChannelOption.SO_KEEPALIVE, true);
+
+            ChannelFuture future = bootstrap.connect(host, port).sync();
+            future.channel().writeAndFlush(request).sync();
+
+            synchronized (obj) {
+                obj.wait(); // 未收到响应，使线程等待
+            }
+
+            if (response != null) {
+                future.channel().closeFuture().sync();
+            }
+            return response;
+        } finally {
+            group.shutdownGracefully();
+        }
+    }
+```
+* 具体可参考项目源码

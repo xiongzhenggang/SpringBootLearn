@@ -55,12 +55,14 @@ public class RpcHandler extends SimpleChannelInboundHandler<RpcRequest> {
                  response.setError(t);
                  LOGGER.error("RPC Server handle request error",t);
              }
-             ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE).addListener(new ChannelFutureListener() {
-                 public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                     LOGGER.debug("Send response for request " + request.getRequestId());
-                 }
-             });
-        });
+             ctx.writeAndFlush(response)
+             	.addListener(ChannelFutureListener.CLOSE)
+             	.addListener(new ChannelFutureListener() {
+             			public void operationComplete(ChannelFuture channelFuture) throws Exception {
+             				LOGGER.debug("Send response for request " + request.getRequestId());
+             			}
+             	});
+        	});
     }
     /**
      * @param request
