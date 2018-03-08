@@ -324,7 +324,8 @@ public class MyActivitiService {
 }
 
 ```
-** 说明：**
+* 说明：
+
 ```
 1）在类中使用delegateTask.addCandidateUser(userId);的方式分配组任务的办理人，此时郭靖和黄蓉是下一个任务的办理人。
 
@@ -356,5 +357,5 @@ public class MyActivitiService {
 	 * taskService.setOwner(taskA.getId(), 总经理.getId());
 	 * taskService.setAssignee/claim(taskA.getId(), 助理.getId());   
 ```
-6. 启动项目后进行通过api测试MyTestController具体不在叙述
+6. 启动项目后进行通过api[测试MyTestController具体不在叙述](https://github.com/xiongzhenggang/SpringBootLearn/blob/master/springboot-shiro/src/main/java/com/us/controller/TestActivitiController.java)
 
