@@ -223,7 +223,8 @@ public class ActivitiConfig {
 ```
 
 3. 不使用官方的用户角色，自定义实现
-* activit6中的用户文档有误，具体可参考https://github.com/Activiti/Activiti/issues/1695
+###  截止到当前使用activit6中的官方用户文档有误，具体可参考https://github.com/Activiti/Activiti/issues/1695
+
 ```java
 @Component
 public class MyGroupManager implements GroupDataManager {
