@@ -53,7 +53,8 @@ public class EhCacheConfig {
 @CacheConfig : 这是一个分组注解，能够同时应用多个其他的缓存注解
 ```
 ## 需要注意的是，@EnableCaching需要加到SpringbootApplication启动类上，否则缓存不会起作用
-### 添加redis缓存，这里使用的redis集群，单机咱不赘述
+### 添加redis缓存，这里使用的redis集群，单机不赘述
+[redis集群搭建](https://github.com/xiongzhenggang/xiongzhenggang.github.io/blob/master/java%E6%A1%86%E6%9E%B6/redis/redis-%E5%AE%98%E6%96%B9cluster%E6%90%AD%E5%BB%BA%E7%AD%96%E7%95%A5.md)
 * 配置类如下：
 ```java
 //spring boot 已经实现如下配置，需要手动配置的application.properties文件
