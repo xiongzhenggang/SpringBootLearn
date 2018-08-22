@@ -14,3 +14,6 @@
 11. spring apache shiro
 12. spring activiti6
 13. netty zookeeper
+---
+### 微服务OTRS以spring could框架和OAth2标准作为基础
+[OTRS微服务](https://github.com/xiongzhenggang/SpringBootLearn/tree/master/otrs)
