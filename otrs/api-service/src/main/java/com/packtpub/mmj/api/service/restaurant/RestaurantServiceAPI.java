@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.apache.log4j.MDC;
+//import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class RestaurantServiceAPI {
     @HystrixCommand(fallbackMethod = "defaultRestaurant")
     public ResponseEntity<Restaurant> getRestaurant(
             @PathVariable("restaurant-id") int restaurantId) {
-        MDC.put("restaurantId", restaurantId);
+//        MDC.put("restaurantId", restaurantId);
         String url = "http://restaurant-service/v1/restaurants/" + restaurantId;
         LOG.debug("GetRestaurant from URL: {}", url);
 
@@ -67,7 +67,7 @@ public class RestaurantServiceAPI {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Collection<Restaurant>> findByName(@RequestParam("name") String name) {
         LOG.info(String.format("api-service findByName() invoked:{} for {} ", "v1/restaurants?name=", name));
-        MDC.put("restaurantId", name);
+//        MDC.put("restaurantId", name);
         String url = "http://restaurant-service/v1/restaurants?name=".concat(name);
         LOG.debug("GetRestaurant from URL: {}", url);
         Collection<Restaurant> restaurants;
@@ -97,7 +97,7 @@ public class RestaurantServiceAPI {
      */
     public ResponseEntity<Collection<Restaurant>> defaultRestaurants(String input) {
         LOG.warn("Fallback method for user-service is being used.");
-        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NO_CONTENT);
     }
 }
 

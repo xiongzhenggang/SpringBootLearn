@@ -5,6 +5,8 @@ import com.packtpub.mmj.user.domain.model.entity.Entity;
 import com.packtpub.mmj.user.domain.model.entity.User;
 import com.packtpub.mmj.user.domain.service.UserService;
 import com.packtpub.mmj.user.domain.valueobject.UserVO;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -122,7 +124,7 @@ public class UserController {
      */
     public ResponseEntity<Entity> defaultUser(String input) {
         logger.warning("Fallback method for user-service is being used.");
-        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>((Entity) null, HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -133,7 +135,7 @@ public class UserController {
      */
     public ResponseEntity<Collection<User>> defaultUsers(String input) {
         logger.warning("Fallback method for user-service is being used.");
-        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NO_CONTENT);
     }
 
 }

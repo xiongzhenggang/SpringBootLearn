@@ -77,7 +77,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.19</version>
                 <configuration>
-                    <phase>integration-test</phase>
+                    <!--<phase>integration-test</phase>-->
                     <groups>com.packtpub.mmj.restaurant.resources.docker.DockerIntegrationTest</groups>
                     <systemPropertyVariables>
                         <service.url>http://${docker.host.address}:${docker.port}/</service.url>
@@ -106,13 +106,17 @@
     </profiles>-->
     <dependencies>
         <dependency>
-            <groupId>com.packtpub.mmj</groupId>
+            <groupId>com.xzg</groupId>
             <artifactId>online-table-reservation-common</artifactId>
-            <version>PACKT-SNAPSHOT</version>
+            <version>v1</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-eureka</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
