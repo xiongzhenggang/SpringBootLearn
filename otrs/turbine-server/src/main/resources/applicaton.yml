@@ -10,7 +10,8 @@ management:
 turbine:
     aggregator:
         clusterConfig: USER-SERVICE,RESTAURANT-SERVICE
-#    clusterNameExpression: new String("default")
+#    clusterNameExpres
+sion: new String("default")
     appConfig: user-service,restaurant-service
 #    clusterNameExpression: 'default'
 #    InstanceMonitor:
