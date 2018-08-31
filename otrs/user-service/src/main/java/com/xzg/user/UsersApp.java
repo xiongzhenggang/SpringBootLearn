@@ -13,10 +13,13 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
+/**
+ * @author xzg
+ */
 @SpringBootApplication
 @EnableEurekaClient
 @EnableCircuitBreaker
-@ComponentScan({"com.packtpub.mmj.user", "com.packtpub.mmj.common"})
+@ComponentScan({"com.xzg.user", "com.xzg.common"})
 public class UsersApp {
 
     private static final Logger LOG = LoggerFactory.getLogger(UsersApp.class);

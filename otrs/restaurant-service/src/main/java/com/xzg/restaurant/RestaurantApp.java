@@ -20,8 +20,8 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 @EnableEurekaClient
 @EnableCircuitBreaker
-@EnableDiscoveryClient
 @EnableHystrix
+//@EnableDiscoveryClient
 public class RestaurantApp {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestaurantApp.class);
