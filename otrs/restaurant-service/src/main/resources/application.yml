@@ -6,10 +6,12 @@ spring:
     enabled: false           # Ignore Eureka dashboard FreeMarker templates
   thymeleaf:
     cache: false             # Allow Thymeleaf templates to be reloaded at runtime
+# profiles: dev
+
 
 # HTTP Server
 server:
-  port: 0   # HTTP (Tomcat) port
+  port: 8898   # HTTP (Tomcat) port
 
 # Discovery Server Access
 eureka:

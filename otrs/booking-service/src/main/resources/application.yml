@@ -19,7 +19,7 @@ eureka:
 
 # HTTP Server
 server:
-  port: 0   # HTTP (Tomcat) port
+  port: 8899   # HTTP (Tomcat) port
 
 
 

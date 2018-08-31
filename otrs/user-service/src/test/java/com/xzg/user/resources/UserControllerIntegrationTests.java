@@ -13,9 +13,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.TestRestTemplate;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -30,11 +28,10 @@ import org.springframework.web.client.RestTemplate;
  * same configuration that Spring Boot uses.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = UsersApp.class)
-@WebIntegrationTest
+@SpringBootTest
 public class UserControllerIntegrationTests {
 
-    private final RestTemplate restTemplate = new TestRestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
     //Required to Generate JSON content from Java objects
     public static final ObjectMapper objectMapper = new ObjectMapper();
 

@@ -9,6 +9,9 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.turbine.EnableTurbine;
 import org.springframework.context.annotation.Bean;
 
+/**
+ * @author xzg
+ */
 @SpringBootApplication
 @EnableTurbine
 @EnableEurekaClient

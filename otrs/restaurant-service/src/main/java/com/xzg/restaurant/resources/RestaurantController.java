@@ -138,7 +138,7 @@ public class RestaurantController {
      */
     public ResponseEntity<Entity> defaultRestaurant(String input) {
         logger.warning("Fallback method for restaurant-service is being used.");
-        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -149,6 +149,6 @@ public class RestaurantController {
      */
     public ResponseEntity<Collection<Restaurant>> defaultRestaurants(String input) {
         logger.warning("Fallback method for user-service is being used.");
-        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

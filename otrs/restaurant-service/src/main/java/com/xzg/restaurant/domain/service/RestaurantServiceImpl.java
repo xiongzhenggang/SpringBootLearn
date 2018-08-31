@@ -92,6 +92,7 @@ public class RestaurantServiceImpl extends BaseService<Restaurant, String>
      */
     @Override
     public Collection<Restaurant> findByCriteria(Map<String, ArrayList<String>> name) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
