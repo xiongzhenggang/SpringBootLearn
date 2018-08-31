@@ -12,7 +12,7 @@
     <packaging>jar</packaging>
     <name>online-table-reservation:restaurant-service</name>
     <properties>
-        <start-class>com.packtpub.mmj.restaurant.RestaurantApp</start-class>
+        <start-class>com.xzg.restaurant.RestaurantApp</start-class>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <!-- For Docker hub leave empty; use "localhost:5000/" for a local Docker Registry -->
@@ -78,7 +78,7 @@
                 <version>2.19</version>
                 <configuration>
                     <!--<phase>integration-test</phase>-->
-                    <groups>com.packtpub.mmj.restaurant.resources.docker.DockerIntegrationTest</groups>
+                    <groups>DockerIntegrationTest</groups>
                     <systemPropertyVariables>
                         <service.url>http://${docker.host.address}:${docker.port}/</service.url>
                     </systemPropertyVariables>
@@ -97,7 +97,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.19.1</version>
                 <configuration>
-                    <excludedGroups>com.packtpub.mmj.restaurant.resources.docker.DockerIntegrationTest</excludedGroups>
+                    <excludedGroups>DockerIntegrationTest</excludedGroups>
                 </configuration>
             </plugin>
         </plugins>

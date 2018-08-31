@@ -11,7 +11,7 @@
     <name>online-table-reservation:dashboard-server</name>
 
     <properties>
-        <start-class>com.packtpub.mmj.dashboard.DashboardApp</start-class>
+        <start-class>com.xzg.dashboard.DashboardApp</start-class>
     </properties>
 
     <dependencies>

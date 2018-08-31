@@ -11,7 +11,7 @@
     <artifactId>eureka-server</artifactId>
     <packaging>jar</packaging>
     <properties>
-        <start-class>com.packtpub.mmj.eureka.service.App</start-class>
+        <start-class>com.xzg.eureka.service.App</start-class>
         <docker.registry.name>localhost:5000/</docker.registry.name>
         <docker.repository.name>${docker.registry.name}sourabhh/${project.artifactId}</docker.repository.name>
         <docker.host.address>192.168.99.100</docker.host.address>

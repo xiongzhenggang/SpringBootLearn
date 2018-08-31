@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
     <name>online-table-reservation:zuul-server</name>
     <properties>
-        <start-class>com.packtpub.mmj.zuul.server.EdgeApp</start-class>
+        <start-class>com.xzg.zuul.server.EdgeApp</start-class>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>

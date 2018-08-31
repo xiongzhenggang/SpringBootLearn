@@ -12,7 +12,7 @@
     <packaging>jar</packaging>
     <name>online-table-reservation:user-service</name>
     <properties>
-        <start-class>com.packtpub.mmj.user.UsersApp</start-class>
+        <start-class>com.xzg.user.UsersApp</start-class>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <!-- For Docker hub leave empty; use "localhost:5000/" for a local Docker Registry -->
@@ -107,7 +107,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.19</version>
                 <configuration>
-                    <excludedGroups>com.packtpub.mmj.user.resources.docker.DockerIntegrationTest</excludedGroups>
+                    <excludedGroups>DockerIntegrationTest</excludedGroups>
                 </configuration>
             </plugin>
         </plugins>

@@ -11,7 +11,7 @@
     <name>online-table-reservation:turbine-server</name>
 
     <properties>
-        <start-class>com.packtpub.mmj.turbine.server.TurbineApp</start-class>
+        <start-class>com.xzg.turbine.server.TurbineApp</start-class>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
