@@ -44,5 +44,4 @@ public class ForeachUtil {
             CatchUtil.tryDo(part, doFunc);
         }
     }
-
 }

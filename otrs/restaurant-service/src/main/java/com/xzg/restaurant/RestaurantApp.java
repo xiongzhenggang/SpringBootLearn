@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Bean;
 @EnableEurekaClient
 @EnableCircuitBreaker
 @EnableHystrix
-//@EnableDiscoveryClient
+@EnableDiscoveryClient
 public class RestaurantApp {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestaurantApp.class);
