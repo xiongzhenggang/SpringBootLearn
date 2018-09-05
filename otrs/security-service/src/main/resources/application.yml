@@ -8,8 +8,9 @@ server:
         key-store: classpath:keystore.jks
         key-store-password: password
         key-password: password
+# contextPath表示上下文；路径
     contextPath: /auth
-
+# 暂时使用硬编码
 security:
     user:
         password: password

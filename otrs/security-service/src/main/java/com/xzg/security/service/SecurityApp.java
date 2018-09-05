@@ -27,27 +27,4 @@ public class SecurityApp {
     public static void main(String[] args) {
         SpringApplication.run(SecurityApp.class, args);
     }
-
-    @Configuration
-    @EnableAuthorizationServer
-    protected static class OAuth2Config extends AuthorizationServerConfigurerAdapter {
-
-        @Autowired
-        private AuthenticationManager authenticationManager;
-
-        @Override
-        public void configure(AuthorizationServerEndpointsConfigurer endpointsConfigurer) throws Exception {
-            endpointsConfigurer.authenticationManager(authenticationManager);
-        }
-
-        @Override
-        public void configure(ClientDetailsServiceConfigurer clientDetailsServiceConfigurer) throws Exception {
-            // Using hardcoded inmemory mechanism because it is just an example
-            clientDetailsServiceConfigurer.inMemory()
-                    .withClient("client")
-                    .secret("clientsecret")
-                    .authorizedGrantTypes("authorization_code", "refresh_token", "implicit", "password", "client_credentials")
-                    .scopes("apiAccess");
-        }
-    }
 }
