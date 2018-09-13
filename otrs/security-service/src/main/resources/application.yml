@@ -9,7 +9,8 @@ server:
         key-store-password: password
         key-password: password
 # contextPath表示上下文；路径
-    contextPath: /auth
+#    contextPath: /auth
+
 # 暂时使用硬编码
 security:
     user:
