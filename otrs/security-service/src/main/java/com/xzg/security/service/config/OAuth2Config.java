@@ -14,21 +14,21 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
  * 授权认证服务：AuthenticationServer
  */
 @Configuration
-@EnableAuthorizationServer
 public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+//    @Autowired
+//    private AuthenticationManager authenticationManager;
 
     /**
      * @param endpointsConfigurer
      * 用来配置授权（authorization）以及令牌（token）的访问端点和令牌服务(token services)。
      * @throws Exception
      */
-    @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpointsConfigurer) throws Exception {
-        endpointsConfigurer.authenticationManager(authenticationManager);
-    }
+//    @Override
+//    public void configure(AuthorizationServerEndpointsConfigurer endpointsConfigurer) throws Exception {
+//        endpointsConfigurer.authenticationManager(authenticationManager);
+//        // endpoints.tokenStore(tokenStore());
+//    }
 
     /**
      * @param clientDetailsServiceConfigurer
@@ -39,17 +39,21 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
     @Override
     public void configure(ClientDetailsServiceConfigurer clientDetailsServiceConfigurer) throws Exception {
         // Using hardcoded inmemory mechanism because it is just an example
-        clientDetailsServiceConfigurer.inMemory()//使用方法代替in-memory、JdbcClientDetailsService、jwt
-                //用来标识客户的Id。
-//        client_id: 第三方用户的id（可理解为账号）
-//        client_secret:第三方应用和授权服务器之间的安全凭证(可理解为密码)
+        clientDetailsServiceConfigurer
+                .inMemory()//使用方法代替in-memory、JdbcClientDetailsService、jwt
+//        client_id: 用来标识客户的Id。第三方用户的id（可理解为账号）
                 .withClient("client")
+//        client_secret:第三方应用和授权服务器之间的安全凭证(可理解为密码)
                 //（需要值得信任的客户端）客户端安全码
                 .secret("password")
                 .accessTokenValiditySeconds(7200)
-                .authorizedGrantTypes("authorization_code", "refresh_token", "implicit", "password", "client_credentials")
-                .scopes("apiAccess");
+                //
+                .authorizedGrantTypes("authorization_code", "refresh_token", "client_credentials", "implicit", "password")
+                .scopes("app");
+// .scopes("ROLE_USER");
+//                .scopes("apiAccess");
     }
+
 
     /**
      * @param security

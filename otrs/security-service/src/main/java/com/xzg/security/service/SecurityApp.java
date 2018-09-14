@@ -20,18 +20,20 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 @RestController
 //@EnableResourceServer
+@EnableAuthorizationServer
 public class SecurityApp extends WebSecurityConfigurerAdapter {
 
     @RequestMapping("/user")
     public Principal user(Principal user) {
         return user;
     }
-    //
-    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+
+
+//    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
+//    @Override
+//    public AuthenticationManager authenticationManagerBean() throws Exception {
+//        return super.authenticationManagerBean();
+//    }
 
     public static void main(String[] args) {
         SpringApplication.run(SecurityApp.class, args);
