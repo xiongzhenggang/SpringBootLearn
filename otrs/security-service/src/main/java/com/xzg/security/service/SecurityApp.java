@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -17,25 +19,14 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * @author xzg
+ */
 @SpringBootApplication
 @RestController
-//@EnableResourceServer
-@EnableAuthorizationServer
-public class SecurityApp extends WebSecurityConfigurerAdapter {
-
-    @RequestMapping("/user")
-    public Principal user(Principal user) {
-        return user;
-    }
-
-
-//    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
-//    @Override
-//    public AuthenticationManager authenticationManagerBean() throws Exception {
-//        return super.authenticationManagerBean();
-//    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(SecurityApp.class, args);
-    }
+@ComponentScan("com.xzg.security.service")
+public class SecurityApp {
+public static void main(String[] args) {
+    SpringApplication.run(SecurityApp.class, args);
+}
 }

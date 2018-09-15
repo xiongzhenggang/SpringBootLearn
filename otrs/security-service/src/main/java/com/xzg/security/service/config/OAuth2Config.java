@@ -15,10 +15,14 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
  */
 @Configuration
 public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
+//    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
+//    @Override
+//    public AuthenticationManager authenticationManagerBean() throws Exception {
+//        return super.authenticationManagerBean();
+//    }
 
 //    @Autowired
 //    private AuthenticationManager authenticationManager;
-
     /**
      * @param endpointsConfigurer
      * 用来配置授权（authorization）以及令牌（token）的访问端点和令牌服务(token services)。
@@ -47,7 +51,6 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
                 //（需要值得信任的客户端）客户端安全码
                 .secret("password")
                 .accessTokenValiditySeconds(7200)
-                //
                 .authorizedGrantTypes("authorization_code", "refresh_token", "client_credentials", "implicit", "password")
                 .scopes("app");
 // .scopes("ROLE_USER");
@@ -66,7 +69,8 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
                 // 开启/oauth/token_key验证端口无权限访问
                 .tokenKeyAccess("permitAll()")
                 // 开启/oauth/check_token验证端口认证权限访问
-                .checkTokenAccess("isAuthenticated()");
+                .checkTokenAccess("isAuthenticated()")
+                .allowFormAuthenticationForClients();
     }
 
 }
