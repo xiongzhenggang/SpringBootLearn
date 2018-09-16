@@ -1,13 +1,19 @@
 package com.xzg.security.service.config;
 
+import com.xzg.security.service.selfToken.JwtAccessToken;
+import com.xzg.security.service.service.BaseUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
 /**
  * @author xzg
@@ -15,24 +21,27 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
  */
 @Configuration
 public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
-//    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
-//    @Override
-//    public AuthenticationManager authenticationManagerBean() throws Exception {
-//        return super.authenticationManagerBean();
-//    }
+    @Autowired
+    private BaseUserDetailService userDetailsService;
 
-//    @Autowired
-//    private AuthenticationManager authenticationManager;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     /**
      * @param endpointsConfigurer
      * 用来配置授权（authorization）以及令牌（token）的访问端点和令牌服务(token services)。
      * @throws Exception
+     * 配置令牌 管理 (jwtAccessTokenConverter)
      */
-//    @Override
-//    public void configure(AuthorizationServerEndpointsConfigurer endpointsConfigurer) throws Exception {
-//        endpointsConfigurer.authenticationManager(authenticationManager);
-//        // endpoints.tokenStore(tokenStore());
-//    }
+    @Override
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+        endpoints.authenticationManager(authenticationManager)
+                // 配置JwtAccessToken转换器
+                .accessTokenConverter(jwtAccessTokenConverter())
+                // refresh_token需要userDetailsService
+                .reuseRefreshTokens(false).userDetailsService(userDetailsService);
+        //.tokenStore(getJdbcTokenStore());
+    }
 
     /**
      * @param clientDetailsServiceConfigurer
@@ -52,9 +61,9 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
                 .secret("password")
                 .accessTokenValiditySeconds(7200)
                 .authorizedGrantTypes("authorization_code", "refresh_token", "client_credentials", "implicit", "password")
-                .scopes("app");
+//                .scopes("app");
 // .scopes("ROLE_USER");
-//                .scopes("apiAccess");
+                .scopes("apiAccess");
     }
 
 
@@ -69,8 +78,23 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
                 // 开启/oauth/token_key验证端口无权限访问
                 .tokenKeyAccess("permitAll()")
                 // 开启/oauth/check_token验证端口认证权限访问
-                .checkTokenAccess("isAuthenticated()")
-                .allowFormAuthenticationForClients();
+                .checkTokenAccess("isAuthenticated()");
+//                .allowFormAuthenticationForClients();
     }
+    /**
+     * 使用非对称加密算法来对Token进行签名
+     * @return
+     */
+    @Bean
+    public JwtAccessTokenConverter jwtAccessTokenConverter() {
 
+        final JwtAccessTokenConverter converter = new JwtAccessToken();
+        // 导入证书
+        KeyStoreKeyFactory keyStoreKeyFactory =
+                new KeyStoreKeyFactory(new ClassPathResource("keystore.jks"), "password".toCharArray());
+
+        converter.setKeyPair(keyStoreKeyFactory.getKeyPair("selfsigned"));
+
+        return converter;
+    }
 }

@@ -15,6 +15,7 @@ server:
 security:
     user:
         password: password
+    ignored: /css/**,/js/**,/favicon.ico,/webjars/**
 
 logging:
     level:

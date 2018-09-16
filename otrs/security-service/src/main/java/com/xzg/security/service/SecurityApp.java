@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @SpringBootApplication
 @RestController
+@EnableAuthorizationServer
 @ComponentScan("com.xzg.security.service")
 public class SecurityApp {
 public static void main(String[] args) {
