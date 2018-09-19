@@ -1,4 +1,5 @@
 # Eureka Server Configuration
+#默认情况下，eureka.instance.instanceId就是vcap.application.instance_id
 server:
   port: ${vcap.application.port:8761}   # HTTP port
 

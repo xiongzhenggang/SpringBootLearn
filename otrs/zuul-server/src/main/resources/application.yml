@@ -33,7 +33,7 @@ server:
 security:
   oauth2:
     resource:
-      userInfoUri: https://localhost:9001/auth/user
+      userInfoUri: https://localhost:9001/user
       
 hystrix:
   threadpool:

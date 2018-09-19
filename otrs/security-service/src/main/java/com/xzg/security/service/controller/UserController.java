@@ -1,6 +1,6 @@
 package com.xzg.security.service.controller;
 
-import netscape.security.Principal;
+import java.security.Principal;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +20,6 @@ public class UserController {
 //    @PostMapping("login")
 //    public String loginPost(Principal user) {
 //
-//        return "";
+//        return "";UserInfoTokenServices
 //    }
 }

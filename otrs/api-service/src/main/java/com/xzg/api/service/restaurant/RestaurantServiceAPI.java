@@ -1,33 +1,30 @@
 package com.xzg.api.service.restaurant;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.xzg.api.service.restaurant.entityDto.Restaurant;
 import com.xzg.common.ServiceHelper;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 //import org.apache.log4j.MDC;
+import netscape.security.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
 public class RestaurantServiceAPI {
-
     private static final Logger LOG = LoggerFactory.getLogger(RestaurantServiceAPI.class);
-
     @Autowired
     ServiceHelper serviceHelper;
-
     //@Qualifier("userInfoRestTemplate")
     @Autowired
     private RestTemplate restTemplate;
@@ -37,8 +34,14 @@ public class RestaurantServiceAPI {
 
     @RequestMapping("/service")
     public List<String> home() {
-        return client.getServices();
+        return Arrays.asList("ok", "best");
+//        return client.getServices();
     }
+//
+//    @GetMapping("/user")
+//    public Principal user(Principal user) {
+//        return user;
+//    }
 
     @RequestMapping("/restaurant/{restaurant-id}")
     @HystrixCommand(fallbackMethod = "defaultRestaurant")
@@ -101,83 +104,4 @@ public class RestaurantServiceAPI {
     }
 }
 
-class Restaurant {
 
-    private List<Table> tables = new ArrayList<>();
-    private String id;
-    private boolean isModified;
-    private String name;
-    private String address;
-
-    /**
-     *
-     * @return
-     */
-    public String getAddress() {
-        return address;
-    }
-
-    /**
-     *
-     * @param address
-     */
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Restaurant() {
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public boolean isIsModified() {
-        return isModified;
-    }
-
-    public void setIsModified(boolean isModified) {
-        this.isModified = isModified;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Restaurant(String name, String id, List<Table> tables) {
-        this.tables = tables;
-    }
-
-    public void setTables(List<Table> tables) {
-        this.tables = tables;
-    }
-
-    public List<Table> getTables() {
-        return tables;
-    }
-}
-
-class Table {
-
-    private int capacity;
-
-    public Table(String name, BigInteger id, int capacity) {
-        this.capacity = capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-}

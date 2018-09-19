@@ -6,14 +6,20 @@ spring:
         name: api-service
     aop:
         proxyTargetClass: true
-
+    cloud:
+        config:
+            enabled: false
 server:
   port: 7771
+#  ssl:
+#    key-store: classpath:keystore.jks
+#    key-store-password: password
+#    key-password: password
 
 security:
   oauth2:
     resource:
-      userInfoUri: https://localhost:9001/auth/user
+      userInfoUri: https://localhost:9001/user
 
 management:
   security:
