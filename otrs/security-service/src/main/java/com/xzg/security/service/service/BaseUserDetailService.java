@@ -37,12 +37,12 @@ public class BaseUserDetailService implements UserDetailsService {
 //        BaseUser baseUser = baseUserResponseData.getData();
 
         //注意：实际生产应该从数据库中获取，用户名，密码（为BCryptPasswordEncoder hash后的密码）
-        if (!"client".equals(username)) {
+        if (!"zhangsan".equals(username)) {
             logger.error("找不到该用户，用户名：" +username);
             throw new UsernameNotFoundException("找不到该用户，用户名：" + username);
         }
         //密码硬编码
-        String password = BCryptUtil.encodePassword("password");
+        String password = BCryptUtil.encodePassword("12345");
         // 获取用户权限列表
         List<GrantedAuthority> authorities = CreatHardRole.createAuthorities().get();
         // 返回带有用户权限信息的User

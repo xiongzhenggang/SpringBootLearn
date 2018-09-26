@@ -1,5 +1,6 @@
 package com.xzg.security.service.config;
 
+import com.xzg.security.service.Utiils.BCryptUtil;
 import com.xzg.security.service.selfToken.JwtAccessToken;
 import com.xzg.security.service.service.BaseUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -39,7 +42,9 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
                 // 配置JwtAccessToken转换器
                 .accessTokenConverter(jwtAccessTokenConverter())
                 // refresh_token需要userDetailsService
-                .reuseRefreshTokens(false).userDetailsService(userDetailsService);
+                //走password的就是用AuthorizationServerEndpointsConfigurer中配置的userDetailsService来进行认证
+                .reuseRefreshTokens(false)
+                .userDetailsService(userDetailsService);
         //.tokenStore(getJdbcTokenStore());
     }
 
@@ -58,11 +63,11 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
                 .withClient("client")
 //        client_secret:第三方应用和授权服务器之间的安全凭证(可理解为密码)
                 //（需要值得信任的客户端）客户端安全码
-                .secret("password")
+                .secret(BCryptUtil.encodePassword("password"))
                 .accessTokenValiditySeconds(7200)
                 .authorizedGrantTypes("authorization_code", "refresh_token", "client_credentials", "implicit", "password")
 //                .scopes("app");
-// .scopes("ROLE_USER");
+                .authorities("ROLE_USER")
                 .scopes("apiAccess");
     }
 
@@ -78,8 +83,10 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
                 // 开启/oauth/token_key验证端口无权限访问
                 .tokenKeyAccess("permitAll()")
                 // 开启/oauth/check_token验证端口认证权限访问
-                .checkTokenAccess("isAuthenticated()");
-//                .allowFormAuthenticationForClients();
+                .checkTokenAccess("isAuthenticated()")
+                .passwordEncoder(new BCryptPasswordEncoder())
+//        请求/oauth/token的，如果配置支持allowFormAuthenticationForClients的，且url中有client_id和client_secret的会走ClientCredentialsTokenEndpointFilter
+                .allowFormAuthenticationForClients();
     }
     /**
      * 使用非对称加密算法来对Token进行签名

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class CreatHardRole {
     public static  Supplier<List<GrantedAuthority>> createAuthorities() {
-        List<String> roleCodes = Arrays.asList("admin", "normal");
+        List<String> roleCodes = Arrays.asList("ROLE_USER","ADMIN", "USER");
         return () -> roleCodes.stream().map(s -> new SimpleGrantedAuthority(s)).collect(Collectors.toList());
     }
 
