@@ -33,7 +33,8 @@ public class RestaurantServiceAPI {
     DiscoveryClient client;
 
     @RequestMapping("/service")
-    public List<String> home() {
+    public List<String> home(@RequestParam("name") String name) {
+        System.out.println("service");
         return Arrays.asList("ok", "best");
 //        return client.getServices();
     }

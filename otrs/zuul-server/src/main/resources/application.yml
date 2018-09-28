@@ -34,7 +34,12 @@ security:
   oauth2:
     resource:
       userInfoUri: https://localhost:9001/user
-      
+      refer-token-infop: false
+    client:
+      access-token-uri: https://localhost:9001/oauth/token
+      user-authorization-uri: https://localhost:9001/oauth/authorize
+      client-id: client
+
 hystrix:
   threadpool:
     default:

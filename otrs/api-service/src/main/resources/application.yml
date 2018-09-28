@@ -18,8 +18,18 @@ server:
 
 security:
   oauth2:
+    clientId: client
+    clientSecret: password
+    userAuthorizationUri: https://localhost:9001/oauth/authorize
+    grant-type: password
+    scope: apiAccess
+    access-token-uri: https://localhost:9001/oauth/token
     resource:
       userInfoUri: https://localhost:9001/user
+    authorization:
+      checkTokenAccess: http://localhost:9001/oauth/check_token
+  basic:
+    enabled: false
 
 management:
   security:

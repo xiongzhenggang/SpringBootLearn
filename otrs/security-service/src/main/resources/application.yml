@@ -1,7 +1,9 @@
 info:
     component:
         Security Server
-
+spring:
+    application:
+        name: security-service
 server:
     port: 9001
     ssl:
@@ -20,6 +22,20 @@ security:
 #    oauth2:
 #        resource:
 #            filter-order: 3
+eureka:
+    instance:
+        leaseRenewalIntervalInSeconds: 3
+        metadataMap:
+            instanceId: ${vcap.application.instance_id:${spring.application.name}:${spring.application.instance_id:${random.value}}}
+    client:
+        # Default values comes from org.springframework.cloud.netflix.eurek.EurekaClientConfigBean
+        registryFetchIntervalSeconds: 5
+        instanceInfoReplicationIntervalSeconds: 5
+        initialInstanceInfoReplicationIntervalSeconds: 5
+        fetchRegistry: true
+        serviceUrl:
+            defaultZone: ${vcap.services.${PREFIX:}eureka.credentials.uri:http://user:password@localhost:8761}/eureka/
+
 logging:
     level:
         org.springframework.security: DEBUG

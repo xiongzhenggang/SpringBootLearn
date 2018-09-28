@@ -7,8 +7,8 @@
         <artifactId>otrs</artifactId>
         <version>v1</version>
     </parent>
-
     <artifactId>user-service</artifactId>
+    <version>v1</version>
     <packaging>jar</packaging>
     <name>online-table-reservation:user-service</name>
     <properties>
