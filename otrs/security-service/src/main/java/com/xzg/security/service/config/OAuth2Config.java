@@ -83,7 +83,8 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
                 // 开启/oauth/token_key验证端口无权限访问
                 .tokenKeyAccess("permitAll()")
                 // 开启/oauth/check_token验证端口认证权限访问
-                .checkTokenAccess("isAuthenticated()")
+//                .checkTokenAccess("isAuthenticated()")
+                .checkTokenAccess("permitAll()")
                 .passwordEncoder(new BCryptPasswordEncoder())
 //        请求/oauth/token的，如果配置支持allowFormAuthenticationForClients的，且url中有client_id和client_secret的会走ClientCredentialsTokenEndpointFilter
                 .allowFormAuthenticationForClients();
