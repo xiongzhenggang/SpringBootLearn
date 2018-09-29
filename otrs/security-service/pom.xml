@@ -11,7 +11,7 @@
     <dependencies>
         <dependency>
             <groupId>com.xzg</groupId>
-            <artifactId>online-table-reservation-common</artifactId>
+            <artifactId>common</artifactId>
             <version>v1</version>
         </dependency>
 

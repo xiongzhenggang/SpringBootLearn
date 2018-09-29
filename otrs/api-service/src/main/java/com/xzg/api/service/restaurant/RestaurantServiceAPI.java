@@ -4,13 +4,11 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.xzg.api.service.restaurant.entityDto.Restaurant;
 import com.xzg.common.ServiceHelper;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 //import org.apache.log4j.MDC;
-import netscape.security.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

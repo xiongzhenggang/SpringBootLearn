@@ -6,7 +6,7 @@
         <artifactId>otrs</artifactId>
         <version>v1</version>
     </parent>
-    <artifactId>online-table-reservation-common</artifactId>
+    <artifactId>common</artifactId>
     <packaging>jar</packaging>
     <name>online-table-reservation:common</name>
     <dependencies>
