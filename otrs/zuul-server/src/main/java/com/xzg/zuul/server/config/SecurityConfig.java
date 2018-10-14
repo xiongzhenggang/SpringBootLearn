@@ -75,19 +75,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return  new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public RestTemplate restTemplate() {
-        //httpRequestFactory()
-        RestTemplate restTemplate = new RestTemplate();
-        List<HttpMessageConverter<?>> converters = restTemplate.getMessageConverters();
-        for (HttpMessageConverter<?> converter : converters) {
-            if (converter instanceof MappingJackson2HttpMessageConverter) {
-                MappingJackson2HttpMessageConverter jsonConverter = (MappingJackson2HttpMessageConverter) converter;
-                jsonConverter.setObjectMapper(new ObjectMapper());
-//                jsonConverter.setSupportedMediaTypes(ImmutableList.of(new MediaType("*", "json", MappingJackson2HttpMessageConverter.DEFAULT_CHARSET), new MediaType("*", "javascript", MappingJackson2HttpMessageConverter.DEFAULT_CHARSET)));
-                jsonConverter.setSupportedMediaTypes(ImmutableList.of(new MediaType("application", "json", MappingJackson2HttpMessageConverter.DEFAULT_CHARSET), new MediaType("text", "javascript", MappingJackson2HttpMessageConverter.DEFAULT_CHARSET)));
-            }
-        }
-        return restTemplate;
-    }
 }

@@ -22,7 +22,7 @@ security:
     clientSecret: password
     userAuthorizationUri: https://localhost:9001/oauth/authorize
     grant-type: password
-    scope: apiAccess
+#    scope: apiAccess
     access-token-uri: https://localhost:9001/oauth/token
     resource:
       userInfoUri: https://localhost:9001/user

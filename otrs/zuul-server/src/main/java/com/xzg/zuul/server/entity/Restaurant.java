@@ -10,8 +10,16 @@ public class Restaurant {
     private String id;
     private boolean isModified;
     private String name;
-
+    private String address;
     public Restaurant() {
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getId() {
