@@ -30,7 +30,7 @@ public class RestaurantServiceAPI {
     @Autowired
     DiscoveryClient client;
 
-    @RequestMapping("/service")
+    @RequestMapping(name="/service",method = RequestMethod.POST)
     public List<String> home(@RequestParam("name") String name) {
         System.out.println("service");
         return Arrays.asList("ok", "best");

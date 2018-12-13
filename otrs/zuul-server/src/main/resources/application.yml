@@ -16,17 +16,19 @@ endpoints:
 zuul:
     ignoredServices: "*"
     routes:
-        restaurantapi:
+        api-service:
             path: /api/**
             serviceId: api-service
             stripPrefix: true
-        resource:
-          path: /api/**
-          url: http://localhost:9000
+#        resource:
+#          path: /api/**
+#          url: http://localhost:9000
         user:
             path: /user/**
             url: https://localhost:9001/user
-
+#        feign-consumer:
+#          path: /feign-consumer/**
+#          serviceId: feign-consumer
 server:
     ssl:
         key-store: classpath:keystore.jks
